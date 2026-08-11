@@ -1,0 +1,31 @@
+{
+  "name": "cikguboleh",
+  "version": "0.1.0",
+  "private": true,
+  "description": "CikguBoleh — Isi Sekali. Semua Siap. Platform AI & Toolbox Lengkap Untuk Guru Malaysia.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "eslint-config-next": "^14.2.35",
+    "lucide-react": "0.408.0",
+    "next": "^14.2.35",
+    "qrcode": "1.5.4",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "20.14.11",
+    "@types/qrcode": "1.5.5",
+    "@types/react": "18.3.3",
+    "@types/react-dom": "18.3.0",
+    "autoprefixer": "10.4.19",
+    "postcss": "^8.5.26",
+    "tailwindcss": "3.4.6",
+    "typescript": "5.5.3"
+  }
+}

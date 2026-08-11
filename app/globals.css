@@ -1,0 +1,278 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #eaf3f1;
+  --surface: #ffffff;
+  --surface-2: #f4f9f8;
+  --surface-glass: rgba(255, 255, 255, 0.72);
+  --border: #d9e7e3;
+  --border-glass: rgba(255, 255, 255, 0.65);
+  --text: #0e1f1c;
+  --muted: #556965;
+  --ring: rgba(13, 124, 116, 0.35);
+}
+
+.dark {
+  --bg: #05100e;
+  --surface: #0c1c19;
+  --surface-2: #0f2320;
+  --surface-glass: rgba(14, 32, 29, 0.6);
+  --border: #1b332e;
+  --border-glass: rgba(255, 255, 255, 0.08);
+  --text: #e9f2f0;
+  --muted: #93aaa5;
+  --ring: rgba(45, 212, 191, 0.4);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Signature: ambient aurora drifting slowly behind all content. */
+.aurora-bg {
+  position: fixed;
+  inset: -25%;
+  z-index: -10;
+  pointer-events: none;
+  background:
+    radial-gradient(38% 34% at 14% 18%, rgba(16, 185, 129, 0.22), transparent 62%),
+    radial-gradient(34% 30% at 86% 12%, rgba(34, 211, 238, 0.18), transparent 60%),
+    radial-gradient(46% 42% at 78% 82%, rgba(13, 124, 116, 0.22), transparent 62%),
+    radial-gradient(30% 30% at 22% 88%, rgba(249, 122, 18, 0.12), transparent 60%);
+  filter: blur(46px) saturate(1.15);
+  animation: aurora 28s ease-in-out infinite alternate;
+}
+.dark .aurora-bg { opacity: 0.55; }
+@keyframes aurora {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(-2.5%, 1.5%, 0) scale(1.06); }
+  100% { transform: translate3d(2.5%, -1.5%, 0) scale(1.03); }
+}
+
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+@layer components {
+  .surface {
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+
+  .glass {
+    background: var(--surface-glass);
+    backdrop-filter: blur(18px) saturate(1.3);
+    -webkit-backdrop-filter: blur(18px) saturate(1.3);
+    border: 1px solid var(--border-glass);
+  }
+
+  .cb-input {
+    @apply w-full rounded-xl px-3.5 py-2.5 text-sm outline-none transition;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+  }
+  .cb-input:focus {
+    border-color: #0d7c74;
+    box-shadow: 0 0 0 3px var(--ring);
+  }
+
+  .cb-label {
+    @apply mb-1 block text-sm font-medium;
+    color: var(--text);
+  }
+
+  .cb-btn {
+    @apply relative inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold
+           transition-all duration-200 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none;
+  }
+  .cb-btn-primary {
+    @apply cb-btn text-white;
+    background-image: linear-gradient(135deg, #12b886 0%, #0d7c74 55%, #0b5f59 100%);
+    box-shadow: 0 8px 22px -10px rgba(13, 124, 116, 0.65);
+  }
+  .cb-btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 28px -10px rgba(13, 124, 116, 0.7);
+  }
+  .cb-btn-accent {
+    @apply cb-btn text-white;
+    background-image: linear-gradient(135deg, #ffb056 0%, #f97a12 55%, #e05e0a 100%);
+    box-shadow: 0 8px 22px -10px rgba(224, 94, 10, 0.6);
+  }
+  .cb-btn-accent:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 28px -10px rgba(224, 94, 10, 0.68);
+  }
+  .cb-btn-ghost {
+    @apply cb-btn glass;
+    color: var(--text);
+  }
+  .cb-btn-ghost:hover {
+    border-color: color-mix(in srgb, #0d7c74 40%, transparent);
+  }
+
+  .muted { color: var(--muted); }
+
+  .eyebrow {
+    @apply text-xs font-semibold uppercase;
+    letter-spacing: 0.16em;
+  }
+
+  .text-gradient {
+    background: linear-gradient(115deg, #0d7c74 0%, #12b886 45%, #22d3ee 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .tool-card {
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  }
+  .tool-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(120deg, transparent 34%, rgba(255, 255, 255, 0.38) 50%, transparent 66%);
+    transform: translateX(-130%);
+    transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    pointer-events: none;
+  }
+  .tool-card:hover::after { transform: translateX(130%); }
+  .dark .tool-card::after {
+    background: linear-gradient(120deg, transparent 34%, rgba(255, 255, 255, 0.1) 50%, transparent 66%);
+  }
+}
+
+.rise { opacity: 0; animation: rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+@keyframes rise {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .aurora-bg { animation: none; }
+  .tool-card::after { display: none; }
+  .rise { animation: none; opacity: 1; }
+}
+
+@media print {
+  .aurora-bg { display: none !important; }
+  body * { visibility: hidden; }
+  .print-area, .print-area * { visibility: visible; }
+  .print-area {
+    position: absolute; left: 0; top: 0; width: 100%;
+    background: #fff !important; color: #000 !important;
+  }
+  .no-print { display: none !important; }
+  @page { size: A4; margin: 16mm; }
+}
+
+/* ---------------------------------------------------------------- */
+/* Animated brand logo                                              */
+/* ---------------------------------------------------------------- */
+.logo-cap {
+  stroke-dasharray: 130;
+  stroke-dashoffset: 130;
+  animation: logo-draw 1.1s cubic-bezier(0.22, 1, 0.36, 1) forwards 0.15s;
+}
+@keyframes logo-draw { to { stroke-dashoffset: 0; } }
+
+.logo-spark {
+  transform-origin: 25px 7px;
+  animation: logo-twinkle 2.6s ease-in-out infinite 0.6s;
+}
+@keyframes logo-twinkle {
+  0%, 100% { opacity: 0.5; transform: scale(0.75) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1.2) rotate(90deg); }
+}
+
+.logo-tile { position: relative; overflow: hidden; }
+.logo-tile::before {
+  content: "";
+  position: absolute;
+  top: 0; bottom: 0; width: 40%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+  transform: translateX(-180%) skewX(-16deg);
+  animation: logo-sheen 5s ease-in-out infinite 1s;
+}
+@keyframes logo-sheen {
+  0%, 78%, 100% { transform: translateX(-180%) skewX(-16deg); }
+  88% { transform: translateX(320%) skewX(-16deg); }
+}
+.group:hover .logo-spark { animation-duration: 0.9s; }
+.group:hover .logo-tile { transform: scale(1.05); }
+
+/* ---------------------------------------------------------------- */
+/* Loading shimmer skeleton                                         */
+/* ---------------------------------------------------------------- */
+.shimmer {
+  position: relative;
+  overflow: hidden;
+  background: var(--surface-2);
+  border-radius: 0.5rem;
+}
+.shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(13, 124, 116, 0.16), transparent);
+  transform: translateX(-100%);
+  animation: shimmer 1.3s infinite;
+}
+.dark .shimmer::after {
+  background: linear-gradient(90deg, transparent, rgba(45, 212, 191, 0.12), transparent);
+}
+@keyframes shimmer { 100% { transform: translateX(100%); } }
+
+/* ---------------------------------------------------------------- */
+/* Nav link animated underline                                     */
+/* ---------------------------------------------------------------- */
+.nav-link { position: relative; }
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 10px; right: 10px; bottom: 3px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #0d7c74, #12b886, #22d3ee);
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.nav-link:hover::after { transform: scaleX(1); }
+
+@media (prefers-reduced-motion: reduce) {
+  .logo-cap { animation: none; stroke-dashoffset: 0; }
+  .logo-spark { animation: none; opacity: 0.9; }
+  .logo-tile::before { display: none; }
+  .shimmer::after { animation: none; }
+  .nav-link::after { transition: none; }
+}
+
+/* ---------------------------------------------------------------- */
+/* Page transition (per-route entrance)                            */
+/* ---------------------------------------------------------------- */
+.page-enter {
+  animation: page-enter 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes page-enter {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .page-enter { animation: none; }
+}
