@@ -13,11 +13,32 @@ export default function AdminLoginPage() {
   const [loading, setLoading] = useState(false);
   const [checking, setChecking] = useState(true);
 
-  // Jika sesi masih sah, terus ke panel — tak perlu log masuk semula.
+  // Semak sesi sedia ada. Borang MESTI muncul walau apa pun jadi pada request ini:
+  // 200 sah -> ke /admin; selain itu (401 / ralat / timeout / tiada cookie) -> papar borang.
   useEffect(() => {
-    fetch("/api/admin/me")
-      .then((r) => (r.ok ? router.replace("/admin") : setChecking(false)))
-      .catch(() => setChecking(false));
+    let active = true;
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 5000); // jangan hang selama-lamanya
+
+    (async () => {
+      try {
+        const res = await fetch("/api/admin/me", { cache: "no-store", signal: controller.signal });
+        if (res.ok) {
+          const data = await res.json().catch(() => null);
+          if (active && data && data.email) {
+            router.replace("/admin");
+            return; // biar checking kekal true semasa redirect
+          }
+        }
+      } catch {
+        /* abort / rangkaian / bukan JSON — abaikan, papar borang */
+      } finally {
+        clearTimeout(timer);
+        if (active) setChecking(false);
+      }
+    })();
+
+    return () => { active = false; controller.abort(); clearTimeout(timer); };
   }, [router]);
 
   async function login() {
@@ -25,13 +46,23 @@ export default function AdminLoginPage() {
     setLoading(true); setErr("");
     try {
       const res = await fetch("/api/admin/login", {
-        method: "POST", headers: { "Content-Type": "application/json" },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        cache: "no-store",
         body: JSON.stringify({ email, password: pw }),
       });
-      if (res.ok) { router.push("/admin"); router.refresh(); }
-      else { const d = await res.json().catch(() => ({})); setErr(d.error ?? "Email atau kata laluan tidak sah."); }
-    } catch { setErr("Ralat rangkaian."); }
-    finally { setLoading(false); }
+      if (res.ok) {
+        router.push("/admin");
+        router.refresh();
+      } else {
+        const d = await res.json().catch(() => ({}));
+        setErr(d.error ?? "Email atau kata laluan tidak sah.");
+      }
+    } catch {
+      setErr("Ralat rangkaian. Sila cuba lagi.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -42,22 +73,48 @@ export default function AdminLoginPage() {
           <p className="mt-3 text-sm muted">Menyemak sesi…</p>
         </div>
       ) : (
-      <div className="glass rounded-2xl p-6 shadow-card">
-        <div className="group flex items-center gap-2">
-          <Logo size={36} />
-          <div>
-            <h1 className="font-display text-lg font-extrabold leading-none">Panel Pentadbir</h1>
-            <p className="text-xs muted">CikguBoleh</p>
+        <div className="glass rounded-2xl p-6 shadow-card">
+          <div className="group flex items-center gap-2">
+            <Logo size={36} />
+            <div>
+              <h1 className="font-display text-lg font-extrabold leading-none">Panel Pentadbir</h1>
+              <p className="text-xs muted">CikguBoleh</p>
+            </div>
           </div>
-        </div>
 
-        <label className="cb-label mt-5">Email Admin</label>
-        <input type="email" required autoComplete="username" className="cb-input" value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={(e) => e.key === "Enter" && login()} autoFocus />
-        <label className="cb-label mt-3">Kata laluan</label>
-        <input type="password" required autoComplete="current-password" className="cb-input" value={pw} onChange={(e) => setPw(e.target.value)} onKeyDown={(e) => e.key === "Enter" && login()} />
-        {err && <p className="mt-2 flex items-center gap-1 text-sm text-red-500"><Lock className="h-3.5 w-3.5" /> {err}</p>}
-        <button onClick={login} disabled={loading} className="cb-btn-primary mt-4 w-full">{loading ? "Menyemak…" : "Log Masuk"}</button>
-      </div>
+          <label className="cb-label mt-5">Email Admin</label>
+          <input
+            type="email"
+            required
+            autoComplete="username"
+            className="cb-input"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && login()}
+            autoFocus
+          />
+
+          <label className="cb-label mt-3">Kata laluan</label>
+          <input
+            type="password"
+            required
+            autoComplete="current-password"
+            className="cb-input"
+            value={pw}
+            onChange={(e) => setPw(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && login()}
+          />
+
+          {err && (
+            <p className="mt-2 flex items-center gap-1 text-sm text-red-500">
+              <Lock className="h-3.5 w-3.5" /> {err}
+            </p>
+          )}
+
+          <button onClick={login} disabled={loading} className="cb-btn-primary mt-4 w-full">
+            {loading ? "Menyemak…" : "Log Masuk"}
+          </button>
+        </div>
       )}
     </div>
   );
