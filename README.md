@@ -160,3 +160,22 @@ Build menggunakan Next.js 14.2.35 (versi bertampung untuk advisori keselamatan N
 ---
 
 *CikguBoleh ialah platform bebas dan **bukan** laman rasmi Kementerian Pendidikan Malaysia.*
+
+---
+
+## Panel Pentadbir, Pangkalan Data & Email (kemas kini)
+
+CikguBoleh kini menyokong **PostgreSQL sebenar (Supabase)**, **Panel Pentadbir**, **analitik**, dan **email (Resend)**.
+
+- Storan **dual-mode**: jika `DATABASE_URL` diset → PostgreSQL; jika tidak → in-memory (demo).
+- Panel Pentadbir di `/admin` (login `/admin/login`): Gambaran Keseluruhan, Pengguna, Aktiviti, Maklum Balas, Status Sistem.
+- Auth admin guna **bcrypt** (`ADMIN_EMAIL` + `ADMIN_PASSWORD_HASH`) dengan sesi cookie **HTTP-only bertandatangan** (`ADMIN_SESSION_SECRET`), rate-limit login, dan pengesahan sesi server-side.
+- Email guna **Resend** (`RESEND_API_KEY`, `EMAIL_FROM`): auto-reply selepas feedback, balasan admin, email kelulusan — semua server-side, idempotent, dan tidak menjejaskan simpanan feedback jika email gagal.
+
+### Langkah pengaktifan
+1. Jalankan migrasi: `database/migration-admin-dashboard.sql` di Supabase SQL Editor.
+2. Jana hash: `node scripts/generate-admin-password.mjs "KataLaluanAnda"`.
+3. Tambah env di Vercel: `ADMIN_EMAIL`, `ADMIN_PASSWORD_HASH`, `ADMIN_SESSION_SECRET`, (pilihan) `RESEND_API_KEY`, `EMAIL_FROM`.
+4. Redeploy. Log masuk di `/admin/login`.
+
+> **Nota ujian:** Integrasi Supabase & Resend disahkan melalui build/typecheck/lint, ujian unit sesi, ujian `pg` bermock (SQL berparameter), dan ujian E2E mod in-memory. Panggilan langsung ke Supabase/Resend hanya aktif apabila `DATABASE_URL`/`RESEND_API_KEY` anda dijalankan di Vercel.

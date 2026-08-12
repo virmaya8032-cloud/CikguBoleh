@@ -1,11 +1,10 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/admin-guard";
-import { analyticsSummary, feedbackCounts } from "@/lib/store";
+import { visitorSummary } from "@/lib/store";
 
 export const runtime = "nodejs";
 
 export async function GET() {
   if (!(await requireAdmin())) return NextResponse.json({ error: "Tidak dibenarkan." }, { status: 401 });
-  const [a, fb] = await Promise.all([analyticsSummary(), feedbackCounts()]);
-  return NextResponse.json({ ...a, feedback: fb });
+  return NextResponse.json({ users: await visitorSummary(50) });
 }
