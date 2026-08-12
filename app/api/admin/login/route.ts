@@ -1,17 +1,28 @@
 import { NextResponse } from "next/server";
-import { ADMIN_COOKIE, verifyPassword, sessionToken } from "@/lib/auth";
+import { requireAdmin } from "@/lib/admin-guard";
+import { adminEmail, usingDevPassword } from "@/lib/auth";
+import { dbEnabled } from "@/lib/db";
+import { emailConfigured } from "@/lib/email";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic"; // sentiasa nilai semasa; jangan cache
 
-export async function POST(req: Request) {
-  const { password } = await req.json().catch(() => ({ password: "" }));
-  if (!verifyPassword(String(password ?? ""))) {
-    return NextResponse.json({ error: "Kata laluan salah." }, { status: 401 });
+// SENTIASA pulangkan JSON. Tiada laluan kod tanpa return.
+export async function GET() {
+  try {
+    const session = await requireAdmin();
+    if (!session) {
+      return NextResponse.json({ authenticated: false }, { status: 401 });
+    }
+    return NextResponse.json({
+      authenticated: true,
+      email: adminEmail(),
+      db: dbEnabled(),
+      email_active: emailConfigured(),
+      dev_password: usingDevPassword(),
+    });
+  } catch {
+    // Walau apa pun ralat dalaman, jangan hang — pulangkan 401 supaya borang login muncul.
+    return NextResponse.json({ authenticated: false }, { status: 401 });
   }
-  const res = NextResponse.json({ ok: true });
-  res.cookies.set(ADMIN_COOKIE, sessionToken(), {
-    httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production",
-    path: "/", maxAge: 60 * 60 * 8,
-  });
-  return res;
 }
