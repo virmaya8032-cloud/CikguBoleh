@@ -6,7 +6,7 @@ import { MobileNav } from "@/components/ui/MobileNav";
 import { ToastProvider } from "@/components/ui/Toast";
 import { PageTracker } from "@/components/ui/PageTracker";
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://cikguboleh.vercel.app";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://cikgu-boleh.vercel.app";
 
 export const metadata: Metadata = {
   metadataBase: new URL(APP_URL),

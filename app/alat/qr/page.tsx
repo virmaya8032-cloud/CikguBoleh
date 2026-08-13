@@ -23,7 +23,7 @@ export default function QrPage() {
   const toast = useToast();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [kind, setKind] = useState<Kind>("url");
-  const [fields, setFields] = useState({ text: "https://cikguboleh.vercel.app", ssid: "", pass: "", enc: "WPA", phone: "", msg: "", email: "", subject: "" });
+  const [fields, setFields] = useState({ text: "https://cikgu-boleh.vercel.app", ssid: "", pass: "", enc: "WPA", phone: "", msg: "", email: "", subject: "" });
   const [size, setSize] = useState(320);
   const [payload, setPayload] = useState("");
 

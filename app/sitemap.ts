@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { TOOLS, CATEGORIES } from "@/data/tools";
 
-const BASE = process.env.NEXT_PUBLIC_APP_URL || "https://cikguboleh.vercel.app";
+const BASE = process.env.NEXT_PUBLIC_APP_URL || "https://cikgu-boleh.vercel.app";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticPaths = ["", "/alat", "/ppki", "/ai", "/saya", "/maklum-balas", "/maklum-balas/komuniti", "/tentang", "/privasi", "/terma", "/hubungi"];

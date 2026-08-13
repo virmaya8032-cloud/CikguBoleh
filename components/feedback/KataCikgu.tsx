@@ -14,10 +14,14 @@ export function KataCikgu() {
   const [msgs, setMsgs] = useState<PublicMsg[] | null>(null);
 
   useEffect(() => {
-    fetch("/api/feedback?public=1&limit=6")
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 10000); // jangan gantung selamanya
+    fetch("/api/feedback?public=1&limit=6", { signal: controller.signal })
       .then((r) => (r.ok ? r.json() : { items: [] }))
       .then((d) => setMsgs(d.items ?? []))
-      .catch(() => setMsgs([]));
+      .catch(() => setMsgs([])) // termasuk timeout/ralat — loading tetap berakhir
+      .finally(() => clearTimeout(timer));
+    return () => { controller.abort(); clearTimeout(timer); };
   }, []);
 
   return (

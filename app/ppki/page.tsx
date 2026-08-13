@@ -14,7 +14,7 @@ const MODULES = [
   { name: "RPI", href: "/ppki/rpi", desc: "Rancangan Pendidikan Individu penuh.", soon: false },
   { name: "Intervensi", href: "/ppki/intervensi", desc: "Cadangan intervensi & indikator kejayaan.", soon: true },
   { name: "Rekod Perkembangan", href: "/ppki/perkembangan", desc: "Jejak perkembangan kemahiran.", soon: true },
-  { name: "Task Analysis", href: "/ppki/task-analysis", desc: "Pecahkan kemahiran kepada langkah kecil.", soon: true },
+  { name: "Task Analysis", href: "/ppki/task-analysis", desc: "Pecahkan kemahiran kepada langkah kecil.", soon: false },
   { name: "Visual Schedule", href: "/ppki/visual-jadual", desc: "Jadual visual ikon + teks.", soon: true },
   { name: "Behaviour Tracker", href: "/ppki/tingkah-laku", desc: "Rekod tingkah laku, pencetus & tindakan.", soon: true },
 ];

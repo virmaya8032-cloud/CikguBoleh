@@ -25,7 +25,7 @@ export async function sendEmail(to: string, subject: string, html: string): Prom
   }
 }
 
-const APP_URL = () => process.env.NEXT_PUBLIC_APP_URL || "https://cikguboleh.vercel.app";
+const APP_URL = () => process.env.NEXT_PUBLIC_APP_URL || "https://cikgu-boleh.vercel.app";
 
 function shell(title: string, bodyHtml: string): string {
   return `<!doctype html><html><body style="margin:0;background:#eaf3f1;font-family:Arial,Helvetica,sans-serif;color:#0e1f1c">

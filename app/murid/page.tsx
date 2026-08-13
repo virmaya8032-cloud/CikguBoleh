@@ -34,15 +34,22 @@ export default function MuridSaya() {
   const [err, setErr] = useState("");
 
   const load = useCallback(async () => {
+    setState("load");
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 12000); // jangan gantung selamanya
     try {
       const p = new URLSearchParams();
       if (q) p.set("q", q); if (kelas) p.set("kelas", kelas);
-      const res = await fetch(`/api/murid?${p}`, { cache: "no-store" });
+      const res = await fetch(`/api/murid?${p}`, { cache: "no-store", signal: controller.signal });
       if (res.status === 401) { setState("guest"); return; }
       if (!res.ok) { setState("error"); return; }
       const d = await res.json();
-      setRows(d.students); setClasses(d.classes); setState("ok");
-    } catch { setState("error"); }
+      setRows(d.students ?? []); setClasses(d.classes ?? []); setState("ok");
+    } catch {
+      setState("error"); // termasuk timeout/abort/rangkaian — loading tetap berakhir
+    } finally {
+      clearTimeout(timer);
+    }
   }, [q, kelas]);
   useEffect(() => { load(); }, [load]);
   useEffect(() => { if (state === "guest") router.replace("/log-masuk"); }, [state, router]);
