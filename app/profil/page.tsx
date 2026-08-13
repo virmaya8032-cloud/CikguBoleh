@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { BackButton } from "@/components/ui/BackButton";
 
 interface P { display_name: string; email: string; created_at: string }
 function tarikhMY(iso?: string | null) {
@@ -18,10 +19,25 @@ export default function ProfilPage() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    fetch("/api/me/profile", { cache: "no-store" }).then((r) => {
-      if (r.status === 401) { setState("guest"); return null; }
-      return r.json();
-    }).then((d) => { if (d?.profile) { setP(d.profile); setName(d.profile.display_name); setState("ok"); } }).catch(() => setState("guest"));
+    // 1) Segera: papar borang guna data sesi (laju / sudah panas dari header).
+    fetch("/api/auth/me", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((me) => {
+        if (me?.authenticated && me.email) {
+          setP((prev) => prev ?? { display_name: me.name ?? "", email: me.email, created_at: "" });
+          setName((n) => n || (me.name ?? ""));
+          setState((s) => (s === "load" ? "ok" : s));
+        } else if (me && me.authenticated === false) {
+          setState("guest");
+        }
+      })
+      .catch(() => {});
+
+    // 2) Latar belakang: profil penuh (untuk "Ahli Sejak").
+    fetch("/api/me/profile", { cache: "no-store" })
+      .then((r) => (r.status === 401 ? null : r.json()))
+      .then((d) => { if (d?.profile) { setP(d.profile); setName((n) => n || d.profile.display_name); setState("ok"); } })
+      .catch(() => {});
   }, []);
   useEffect(() => { if (state === "guest") router.replace("/log-masuk"); }, [state, router]);
 
@@ -50,6 +66,7 @@ export default function ProfilPage() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-8">
+      <BackButton fallback="/papan-pemuka" />
       <h1 className="font-display text-2xl font-extrabold">Profil Saya</h1>
       <div className="mt-6 surface rounded-2xl p-5 shadow-card">
         <label className="cb-label">Nama Panggilan</label>
@@ -58,7 +75,7 @@ export default function ProfilPage() {
         <input className="cb-input opacity-60" value={p.email} readOnly />
         <p className="mt-1 text-xs muted">E-mel tidak boleh ditukar buat masa ini.</p>
         <label className="cb-label mt-3">Ahli Sejak</label>
-        <input className="cb-input opacity-60" value={tarikhMY(p.created_at)} readOnly />
+        <input className="cb-input opacity-60" value={p.created_at ? tarikhMY(p.created_at) : "Memuatkan…"} readOnly />
         {msg && <p className={`mt-2 text-sm ${msg.includes("berjaya") ? "text-teal-600" : "text-red-500"}`}>{msg}</p>}
         <button onClick={save} disabled={saving} className="cb-btn-primary mt-4">{saving ? "Menyimpan…" : "Kemas Kini Profil"}</button>
       </div>

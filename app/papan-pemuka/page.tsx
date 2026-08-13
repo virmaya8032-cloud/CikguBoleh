@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getTool } from "@/data/tools";
+import { BackButton } from "@/components/ui/BackButton";
 
 interface Data {
   profile: { display_name: string; email: string; created_at: string } | null;
@@ -38,6 +39,7 @@ export default function PapanPemuka() {
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8">
+      <BackButton fallback="/" />
       <h1 className="font-display text-2xl font-extrabold">Selamat datang, {d.profile?.display_name} 👋</h1>
       <p className="text-sm muted">{d.profile?.email}</p>
       <div className="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-4">

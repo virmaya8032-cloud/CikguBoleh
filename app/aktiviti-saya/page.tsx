@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getTool } from "@/data/tools";
+import { BackButton } from "@/components/ui/BackButton";
 
 interface Ev { id: string; event_name: string; tool_slug: string | null; page_path: string | null; device_type: string | null; created_at: string }
 function waktuMY(iso: string) {
@@ -26,6 +27,7 @@ export default function AktivitiSaya() {
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8">
+      <BackButton fallback="/papan-pemuka" />
       <h1 className="font-display text-2xl font-extrabold">Aktiviti Saya</h1>
       <p className="text-sm muted">Rekod penggunaan anda, terkini dahulu.</p>
       {rows.length === 0 ? (

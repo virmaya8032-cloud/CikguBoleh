@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, Search, Pencil, Trash2, X, Users } from "lucide-react";
+import { BackButton } from "@/components/ui/BackButton";
 
 interface Student {
   id: string; name: string; class_name: string | null; dob: string | null;
@@ -75,6 +76,7 @@ export default function MuridSaya() {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8">
+      <BackButton fallback="/" />
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="font-display text-2xl font-extrabold">Murid Saya</h1>
