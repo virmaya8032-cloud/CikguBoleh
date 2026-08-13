@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { addFeedback, listFeedback, displayName, claimAutoReply, setAutoReplyStatus } from "@/lib/store";
 import { autoReplyEmail, sendEmail, emailConfigured } from "@/lib/email";
 import { rateLimit, clientIp } from "@/lib/ratelimit";
+import { currentUser } from "@/lib/current-user";
 
 export const runtime = "nodejs";
 
@@ -30,6 +31,8 @@ export async function POST(req: Request) {
   if (subject.length > 150) return NextResponse.json({ error: "Tajuk terlalu panjang." }, { status: 400 });
   if (!message || message.length > 2000) return NextResponse.json({ error: "Mesej diperlukan (maks 2000 aksara)." }, { status: 400 });
 
+  const sessionUser = await currentUser();
+
   // 1) Insert to storage. Only report success if the write actually succeeds.
   let saved;
   try {
@@ -37,6 +40,7 @@ export async function POST(req: Request) {
       name, email, subject, message, category,
       display_name_mode: (["penuh", "pertama", "anonymous"].includes(mode) ? mode : "penuh") as "penuh" | "pertama" | "anonymous",
       allow_public_display: allowPublic,
+      user_id: sessionUser && sessionUser.role === "user" ? sessionUser.uid : null,
     });
   } catch {
     return NextResponse.json({ error: "Maklum balas tidak dapat disimpan buat masa ini. Sila cuba lagi." }, { status: 503 });

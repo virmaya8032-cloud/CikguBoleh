@@ -25,6 +25,7 @@ export interface Feedback {
   admin_replied_at: string | null;
   created_at: string;
   approved_at: string | null;
+  user_id?: string | null;
   auto_reply_status?: string | null;
   admin_reply_email_status?: string | null;
 }
@@ -40,6 +41,7 @@ export interface AnalyticsEventRow {
   os?: string | null;
   referrer: string | null;
   country?: string | null;
+  user_id?: string | null;
   metadata?: Record<string, unknown> | null;
   created_at: string;
 }
@@ -61,15 +63,15 @@ export function displayName(f: Pick<Feedback, "name" | "display_name_mode">): st
 // ================================ FEEDBACK =================================
 
 export async function addFeedback(
-  input: Omit<Feedback, "id" | "status" | "admin_reply" | "admin_replied_at" | "created_at" | "approved_at">
+  input: Omit<Feedback, "id" | "status" | "admin_reply" | "admin_replied_at" | "created_at" | "approved_at"> & { user_id?: string | null }
 ): Promise<Feedback> {
   if (dbEnabled()) {
     const rows = await query<Feedback>(
-      `INSERT INTO feedback (name, email, display_name_mode, subject, message, category, allow_public_display, status)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,'pending')
+      `INSERT INTO feedback (name, email, display_name_mode, subject, message, category, allow_public_display, status, user_id)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,'pending',$8)
        RETURNING id::text, name, email, display_name_mode, subject, message, category, status,
                  allow_public_display, admin_reply, admin_replied_at, created_at, approved_at`,
-      [input.name, input.email, input.display_name_mode, input.subject, input.message, input.category, input.allow_public_display]
+      [input.name, input.email, input.display_name_mode, input.subject, input.message, input.category, input.allow_public_display, input.user_id ?? null]
     );
     return rows[0];
   }
@@ -96,7 +98,7 @@ export async function listFeedback(filter?: {
     return query<Feedback>(
       `SELECT id::text, name, email, display_name_mode, subject, message, category, status,
               allow_public_display, admin_reply, admin_replied_at, created_at, approved_at,
-              auto_reply_status, admin_reply_email_status
+              user_id::text, auto_reply_status, admin_reply_email_status
        FROM feedback ${w} ORDER BY created_at DESC LIMIT ${lim} OFFSET ${off}`,
       params
     );
@@ -207,9 +209,9 @@ export async function feedbackCounts() {
 export async function addEvent(e: Omit<AnalyticsEventRow, "id">): Promise<void> {
   if (dbEnabled()) {
     await query(
-      `INSERT INTO analytics_events (session_id, event_name, tool_slug, page_path, device_type, browser, os, referrer, country, metadata, created_at)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10, COALESCE($11::timestamptz, now()))`,
-      [e.session_id, e.event_name, e.tool_slug, e.page_path, e.device_type, e.browser ?? null, e.os ?? null, e.referrer, e.country ?? null, JSON.stringify(e.metadata ?? {}), e.created_at ?? null]);
+      `INSERT INTO analytics_events (session_id, event_name, tool_slug, page_path, device_type, browser, os, referrer, country, user_id, metadata, created_at)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11, COALESCE($12::timestamptz, now()))`,
+      [e.session_id, e.event_name, e.tool_slug, e.page_path, e.device_type, e.browser ?? null, e.os ?? null, e.referrer, e.country ?? null, e.user_id ?? null, JSON.stringify(e.metadata ?? {}), e.created_at ?? null]);
     return;
   }
   g.__cb_events!.unshift({ ...e, id: rid() });
@@ -301,4 +303,34 @@ export async function visitorSummary(limit = 50): Promise<Array<{
     const lastTool = [...sorted].reverse().find((e) => e.tool_slug)?.tool_slug ?? null;
     return { session_id, first_seen: sorted[0].created_at, last_active: sorted[sorted.length - 1].created_at, events: evs.length, last_tool: lastTool, device: sorted[sorted.length - 1].device_type ?? null, browser: null, os: null };
   });
+}
+
+// Aktiviti untuk seorang pengguna (guna dalam Aktiviti Saya + admin drill-down)
+export async function userActivity(userId: string, limit = 100): Promise<AnalyticsEventRow[]> {
+  if (dbEnabled()) {
+    return query<AnalyticsEventRow>(
+      `SELECT id::text, session_id, event_name, tool_slug, page_path, device_type, browser, os, referrer, country, user_id::text, created_at
+       FROM analytics_events WHERE user_id = $1 ORDER BY created_at DESC LIMIT $2`, [userId, limit]);
+  }
+  const rows = (globalThis as unknown as { __cb_events?: AnalyticsEventRow[] }).__cb_events ?? [];
+  return rows.filter((r) => r.user_id === userId).slice(0, limit);
+}
+
+export async function userStats(userId: string) {
+  const rows = await userActivity(userId, 1000);
+  const tools = rows.filter((r) => r.event_name === "tool_open" && r.tool_slug).map((r) => r.tool_slug!);
+  const byTool: Record<string, number> = {};
+  tools.forEach((t) => (byTool[t] = (byTool[t] || 0) + 1));
+  const top = Object.entries(byTool).sort((a, b) => b[1] - a[1])[0]?.[0] ?? null;
+  const last = rows[0] ?? null;
+  return {
+    events: rows.length,
+    tools_used: new Set(tools).size,
+    top_tool: top,
+    last_tool: rows.find((r) => r.tool_slug)?.tool_slug ?? null,
+    last_device: last?.device_type ?? null,
+    last_browser: last?.browser ?? null,
+    last_os: last?.os ?? null,
+    last_active: last?.created_at ?? null,
+  };
 }

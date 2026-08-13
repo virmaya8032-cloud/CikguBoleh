@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
+import { AccountMenu } from "./AccountMenu";
 import { Logo } from "./Logo";
 
 const NAV = [
@@ -46,6 +47,7 @@ export function Header() {
 
         <div className="flex items-center gap-1.5">
           <ThemeToggle />
+          <div className="hidden md:block"><AccountMenu /></div>
           <button
             onClick={() => setOpen((v) => !v)}
             className="cb-btn-ghost !px-2.5 !py-2 lg:hidden"

@@ -135,6 +135,17 @@ export const TOOLS: Tool[] = [
 
   // ---- Pengurusan Murid ----
   {
+    name: "Murid Saya",
+    slug: "/murid",
+    description: "Senarai murid anda dengan simpanan kekal — tambah, edit, cari dan guna semula dalam modul lain.",
+    category: "Pengurusan Murid",
+    icon: "Users",
+    keywords: ["murid", "students", "senarai", "kelas", "profil", "rekod"],
+    featured: true,
+    status: "ready",
+    privacyMode: "server",
+  },
+  {
     name: "Random Nama",
     slug: "/alat/random-nama",
     description: "Roda pemilih nama murid — tanpa ulang, penuh skrin, boleh simpan senarai.",

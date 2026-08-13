@@ -17,12 +17,24 @@ export default function FeedbackPage() {
   });
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(false);
   const set = (k: keyof typeof f, v: string | boolean) => setF((p) => ({ ...p, [k]: v }));
 
   useEffect(() => {
     const name = localStorage.getItem(NAME_KEY);
     const email = localStorage.getItem(EMAIL_KEY);
     if (name || email) setF((p) => ({ ...p, name: name ?? "", email: email ?? "", remember: true }));
+
+    // Auto-isi daripada akaun jika sudah login (mengatasi nilai localStorage).
+    fetch("/api/auth/me", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((me) => {
+        if (me?.authenticated && me.email) {
+          setLoggedIn(true);
+          setF((p) => ({ ...p, name: me.name ?? p.name, email: me.email, remember: false }));
+        }
+      })
+      .catch(() => {});
   }, []);
 
   async function submit() {
@@ -76,8 +88,9 @@ export default function FeedbackPage() {
 
       <div className="surface mt-6 rounded-2xl p-5 shadow-card">
         <div className="grid gap-3 sm:grid-cols-2">
-          <div><label className="cb-label">Nama</label><input className="cb-input" value={f.name} onChange={(e) => set("name", e.target.value)} maxLength={100} /></div>
-          <div><label className="cb-label">Email</label><input type="email" className="cb-input" value={f.email} onChange={(e) => set("email", e.target.value)} /></div>
+          <div><label className="cb-label">Nama</label><input className={`cb-input ${loggedIn ? "opacity-70" : ""}`} value={f.name} onChange={(e) => set("name", e.target.value)} maxLength={100} readOnly={loggedIn} /></div>
+          <div><label className="cb-label">Email</label><input type="email" className={`cb-input ${loggedIn ? "opacity-70" : ""}`} value={f.email} onChange={(e) => set("email", e.target.value)} readOnly={loggedIn} /></div>
+        {loggedIn && <p className="-mt-1 text-xs muted">Nama dan e-mel diisi automatik daripada akaun anda.</p>}
         </div>
         <div className="mt-3 grid gap-3 sm:grid-cols-2">
           <div><label className="cb-label">Tajuk (pilihan)</label><input className="cb-input" value={f.subject} onChange={(e) => set("subject", e.target.value)} maxLength={150} /></div>
@@ -107,10 +120,12 @@ export default function FeedbackPage() {
           <input type="checkbox" className="mt-1 accent-teal-600" checked={f.allow_public_display} onChange={(e) => set("allow_public_display", e.target.checked)} />
           <span>Saya membenarkan mesej ini dipaparkan di CikguBoleh selepas diluluskan oleh admin.</span>
         </label>
-        <label className="mt-2 flex items-start gap-2 text-sm">
-          <input type="checkbox" className="mt-1 accent-teal-600" checked={f.remember} onChange={(e) => set("remember", e.target.checked)} />
-          <span>Ingat nama dan email saya pada peranti ini.</span>
-        </label>
+        {!loggedIn && (
+          <label className="mt-2 flex items-start gap-2 text-sm">
+            <input type="checkbox" className="mt-1 accent-teal-600" checked={f.remember} onChange={(e) => set("remember", e.target.checked)} />
+            <span>Ingat nama dan email saya pada peranti ini.</span>
+          </label>
+        )}
 
         <button onClick={submit} disabled={loading} className="cb-btn-accent mt-5 w-full">
           <Send className="h-4 w-4" /> {loading ? "Menghantar…" : "Hantar Mesej"}

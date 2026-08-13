@@ -6,6 +6,7 @@ import { useFavorites, useRecent } from "@/hooks/useToolMemory";
 import { getTool, TOOLS } from "@/data/tools";
 import { ToolCard } from "@/components/ui/ToolCard";
 import { useToast } from "@/components/ui/Toast";
+import { AccountBanner } from "@/components/ui/AccountBanner";
 
 export default function SayaPage() {
   const toast = useToast();
@@ -24,6 +25,7 @@ export default function SayaPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
+      <AccountBanner />
       <h1 className="font-display text-3xl font-extrabold">Ruang Saya</h1>
       <p className="mt-1 text-sm muted">Kegemaran, alat terkini dan draf anda — disimpan pada peranti ini. Tiada akaun diperlukan.</p>
 

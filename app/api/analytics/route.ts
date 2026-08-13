@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { addEvent } from "@/lib/store";
+import { currentUser } from "@/lib/current-user";
 
 export const runtime = "nodejs";
 
@@ -18,6 +19,7 @@ export async function POST(req: Request) {
     const ua = req.headers.get("user-agent") ?? "";
     const { browser, os } = parseUA(ua);
     const country = req.headers.get("x-vercel-ip-country") ?? null;
+    const u = await currentUser();
     await addEvent({
       session_id: String(b.session_id ?? "anon"),
       event_name: String(b.event_name ?? "unknown"),
@@ -26,6 +28,7 @@ export async function POST(req: Request) {
       device_type: b.device_type ? String(b.device_type) : null,
       browser, os, country,
       referrer: b.referrer ? String(b.referrer) : null,
+      user_id: u && u.role === "user" ? u.uid : null,
       metadata: b.metadata && typeof b.metadata === "object" ? b.metadata : {},
       created_at: typeof b.created_at === "string" ? b.created_at : new Date().toISOString(),
     });
