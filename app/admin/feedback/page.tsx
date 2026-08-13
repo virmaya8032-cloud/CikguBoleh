@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { AdminShell, waktuMY } from "@/components/admin/AdminShell";
 import { Check, X, EyeOff, Trash2, Reply, Download, Search } from "lucide-react";
 
@@ -12,10 +13,12 @@ interface Fb {
 interface Counts { pending: number; approved: number; rejected: number; hidden: number; replied: number; public: number; total: number }
 const FILTERS = ["all", "pending", "approved", "rejected", "hidden"] as const;
 
-export default function AdminFeedback() {
+function AdminFeedbackInner() {
   const [items, setItems] = useState<Fb[]>([]);
   const [counts, setCounts] = useState<Counts | null>(null);
-  const [filter, setFilter] = useState<(typeof FILTERS)[number]>("pending");
+  const searchParams = useSearchParams();
+  const initialStatus = (FILTERS as readonly string[]).includes(searchParams.get("status") ?? "") ? (searchParams.get("status") as (typeof FILTERS)[number]) : "pending";
+  const [filter, setFilter] = useState<(typeof FILTERS)[number]>(initialStatus);
   const [q, setQ] = useState("");
   const [page, setPage] = useState(1);
   const [replyFor, setReplyFor] = useState<Fb | null>(null);
@@ -128,5 +131,13 @@ export default function AdminFeedback() {
         </div>
       )}
     </AdminShell>
+  );
+}
+
+export default function AdminFeedback() {
+  return (
+    <Suspense fallback={<div className="mx-auto max-w-7xl px-4 py-8 text-sm muted">Memuatkan…</div>}>
+      <AdminFeedbackInner />
+    </Suspense>
   );
 }

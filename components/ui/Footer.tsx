@@ -32,7 +32,8 @@ export function Footer() {
           </div>
         </div>
         <div className="mt-8 text-xs muted">
-          © {new Date().getFullYear()} CikguBoleh. Dibina untuk memudahkan kerja cikgu.
+          © {new Date().getFullYear()} CikguBoleh · dibina oleh <span className="font-semibold">VMY</span>.
+          <span className="ml-1 opacity-70">Versi {process.env.NEXT_PUBLIC_BUILD_VERSION ?? "dev"}</span>
         </div>
       </div>
     </footer>

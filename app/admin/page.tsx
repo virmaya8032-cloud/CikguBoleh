@@ -1,5 +1,8 @@
 "use client";
 
+import Link from "next/link";
+import { ChevronRight } from "lucide-react";
+
 import { useCallback, useEffect, useState } from "react";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { getTool } from "@/data/tools";
@@ -32,11 +35,11 @@ export default function AdminDashboard() {
   }, []);
   useEffect(() => { load(); }, [load]);
 
-  const cards = s ? [
-    ["Pelawat Hari Ini", s.visitorsToday], ["Pelawat 7 Hari", s.visitors7], ["Pelawat 30 Hari", s.visitors30],
-    ["Jumlah Peristiwa", s.total], ["Tool Dibuka", s.byEvent.tool_open ?? 0], ["Operasi Berjaya", (s.byEvent.tool_run ?? 0)],
-    ["Jumlah Feedback", s.feedback.total], ["Feedback Pending", s.feedback.pending],
-    ["Approved", s.feedback.approved], ["Rejected", s.feedback.rejected], ["Telah Dibalas", s.feedback.replied], ["Public (Kata Cikgu)", s.feedback.public],
+  const cards: [string, number, string][] = s ? [
+    ["Pelawat Hari Ini", s.visitorsToday, "/admin/pengguna"], ["Pelawat 7 Hari", s.visitors7, "/admin/pengguna"], ["Pelawat 30 Hari", s.visitors30, "/admin/pengguna"],
+    ["Jumlah Peristiwa", s.total, "/admin/aktiviti"], ["Tool Dibuka", s.byEvent.tool_open ?? 0, "/admin/aktiviti?event=tool_open"], ["Operasi Berjaya", (s.byEvent.tool_run ?? 0), "/admin/aktiviti?event=tool_run"],
+    ["Jumlah Feedback", s.feedback.total, "/admin/feedback?status=all"], ["Feedback Pending", s.feedback.pending, "/admin/feedback?status=pending"],
+    ["Approved", s.feedback.approved, "/admin/feedback?status=approved"], ["Rejected", s.feedback.rejected, "/admin/feedback?status=rejected"], ["Telah Dibalas", s.feedback.replied, "/admin/feedback?status=all"], ["Public (Kata Cikgu)", s.feedback.public, "/admin/feedback?status=approved"],
   ] : [];
   const maxTool = s ? Math.max(...s.topTools.map((t) => t[1]), 1) : 1;
 
@@ -47,11 +50,11 @@ export default function AdminDashboard() {
       {s && (
         <div className="space-y-6">
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-            {cards.map(([k, v]) => (
-              <div key={k as string} className="glass rounded-2xl p-4 shadow-card">
-                <div className="font-display text-2xl font-extrabold">{v}</div>
-                <div className="text-xs muted">{k}</div>
-              </div>
+            {cards.map(([k, v, href]) => (
+              <Link key={k} href={href} className="group glass rounded-2xl p-4 shadow-card transition hover:-translate-y-0.5 hover:shadow-lift">
+                <div className="font-display text-2xl font-extrabold group-hover:text-teal-600">{v}</div>
+                <div className="flex items-center gap-1 text-xs muted">{k} <ChevronRight className="h-3 w-3 opacity-0 transition group-hover:opacity-100" /></div>
+              </Link>
             ))}
           </div>
 

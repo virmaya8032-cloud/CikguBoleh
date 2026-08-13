@@ -62,7 +62,10 @@ export default function ProfilPage() {
     }
   }
 
-  if (state !== "ok" || !p) return <div className="mx-auto max-w-2xl px-4 py-16 text-center text-sm muted">Memuatkan…</div>;
+  // Jangan block dengan skrin "Memuatkan…" penuh — papar borang terus.
+  // Medan mengisi sebaik data tiba (rasa segera walaupun cold start).
+  if (state === "guest") return null; // sedang dialih ke /log-masuk
+  const ready = !!p;
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-8">
@@ -70,14 +73,14 @@ export default function ProfilPage() {
       <h1 className="font-display text-2xl font-extrabold">Profil Saya</h1>
       <div className="mt-6 surface rounded-2xl p-5 shadow-card">
         <label className="cb-label">Nama Panggilan</label>
-        <input className="cb-input" value={name} onChange={(e) => setName(e.target.value)} />
+        <input className="cb-input" value={name} onChange={(e) => setName(e.target.value)} placeholder={ready ? "" : "Memuatkan…"} disabled={!ready} />
         <label className="cb-label mt-3">E-mel</label>
-        <input className="cb-input opacity-60" value={p.email} readOnly />
+        <input className="cb-input opacity-60" value={p?.email ?? ""} placeholder={ready ? "" : "Memuatkan…"} readOnly />
         <p className="mt-1 text-xs muted">E-mel tidak boleh ditukar buat masa ini.</p>
         <label className="cb-label mt-3">Ahli Sejak</label>
-        <input className="cb-input opacity-60" value={p.created_at ? tarikhMY(p.created_at) : "Memuatkan…"} readOnly />
+        <input className="cb-input opacity-60" value={p?.created_at ? tarikhMY(p.created_at) : (ready ? "—" : "Memuatkan…")} readOnly />
         {msg && <p className={`mt-2 text-sm ${msg.includes("berjaya") ? "text-teal-600" : "text-red-500"}`}>{msg}</p>}
-        <button onClick={save} disabled={saving} className="cb-btn-primary mt-4">{saving ? "Menyimpan…" : "Kemas Kini Profil"}</button>
+        <button onClick={save} disabled={saving || !ready} className="cb-btn-primary mt-4">{saving ? "Menyimpan…" : "Kemas Kini Profil"}</button>
       </div>
     </div>
   );

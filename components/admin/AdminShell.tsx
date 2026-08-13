@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { LayoutDashboard, Users, Activity, MessageSquare, Settings, LogOut, RefreshCw } from "lucide-react";
@@ -14,10 +16,20 @@ const NAV = [
 ];
 
 export function AdminShell({ children, title, subtitle, onRefresh }: {
-  children: React.ReactNode; title: string; subtitle?: string; onRefresh?: () => void;
+  children: React.ReactNode; title: string; subtitle?: string; onRefresh?: () => void | Promise<void>;
 }) {
   const path = usePathname();
   const router = useRouter();
+  const [refreshing, setRefreshing] = useState(false);
+
+  async function handleRefresh() {
+    if (!onRefresh || refreshing) return;
+    setRefreshing(true);
+    try { await onRefresh(); } finally {
+      // pastikan animasi kelihatan sekurang-kurangnya sekejap
+      setTimeout(() => setRefreshing(false), 500);
+    }
+  }
 
   async function logout() {
     await fetch("/api/admin/logout", { method: "POST" });
@@ -55,7 +67,7 @@ export function AdminShell({ children, title, subtitle, onRefresh }: {
               {subtitle && <p className="text-sm muted">{subtitle}</p>}
             </div>
             {onRefresh && (
-              <button onClick={onRefresh} className="cb-btn-ghost !py-2"><RefreshCw className="h-4 w-4" /> Muat Semula</button>
+              <button onClick={handleRefresh} disabled={refreshing} className="cb-btn-ghost !py-2"><RefreshCw className={`h-4 w-4 transition-transform ${refreshing ? "animate-spin" : ""}`} /> {refreshing ? "Memuat…" : "Muat Semula"}</button>
             )}
           </div>
           {children}
