@@ -15,6 +15,7 @@ export default function ProfilPage() {
   const [name, setName] = useState("");
   const [state, setState] = useState<"load" | "ok" | "guest">("load");
   const [msg, setMsg] = useState("");
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     fetch("/api/me/profile", { cache: "no-store" }).then((r) => {
@@ -25,11 +26,24 @@ export default function ProfilPage() {
   useEffect(() => { if (state === "guest") router.replace("/log-masuk"); }, [state, router]);
 
   async function save() {
-    setMsg("");
-    const res = await fetch("/api/me/profile", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ display_name: name }) });
-    const d = await res.json().catch(() => ({}));
-    if (res.ok) { setP(d.profile); setMsg("Profil dikemas kini."); }
-    else setMsg(d.error ?? "Gagal mengemas kini.");
+    if (saving) return;
+    setMsg(""); setSaving(true);
+    try {
+      const res = await fetch("/api/me/profile", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ display_name: name }) });
+      const d = await res.json().catch(() => ({}));
+      if (res.ok) {
+        setP(d.profile);            // guna respons terus, tiada fetch berulang
+        setMsg("Profil berjaya dikemas kini.");
+        // Kemas kini nama pada header/menu akaun serta-merta (tanpa reload).
+        window.dispatchEvent(new Event("cb-auth-changed"));
+      } else {
+        setMsg(d.error ?? "Gagal mengemas kini.");
+      }
+    } catch {
+      setMsg("Ralat rangkaian. Sila cuba lagi.");
+    } finally {
+      setSaving(false);
+    }
   }
 
   if (state !== "ok" || !p) return <div className="mx-auto max-w-2xl px-4 py-16 text-center text-sm muted">Memuatkan…</div>;
@@ -45,8 +59,8 @@ export default function ProfilPage() {
         <p className="mt-1 text-xs muted">E-mel tidak boleh ditukar buat masa ini.</p>
         <label className="cb-label mt-3">Ahli Sejak</label>
         <input className="cb-input opacity-60" value={tarikhMY(p.created_at)} readOnly />
-        {msg && <p className="mt-2 text-sm text-teal-600">{msg}</p>}
-        <button onClick={save} className="cb-btn-primary mt-4">Kemas Kini Profil</button>
+        {msg && <p className={`mt-2 text-sm ${msg.includes("berjaya") ? "text-teal-600" : "text-red-500"}`}>{msg}</p>}
+        <button onClick={save} disabled={saving} className="cb-btn-primary mt-4">{saving ? "Menyimpan…" : "Kemas Kini Profil"}</button>
       </div>
     </div>
   );

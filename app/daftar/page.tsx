@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Logo } from "@/components/ui/Logo";
+import { PasswordInput } from "@/components/ui/PasswordInput";
 
 export default function DaftarPage() {
   const router = useRouter();
@@ -35,9 +36,9 @@ export default function DaftarPage() {
         <label className="cb-label mt-3">E-mel</label>
         <input type="email" className="cb-input" value={f.email} onChange={set("email")} autoComplete="email" />
         <label className="cb-label mt-3">Kata Laluan</label>
-        <input type="password" className="cb-input" value={f.password} onChange={set("password")} autoComplete="new-password" />
+        <PasswordInput value={f.password} onChange={set("password")} autoComplete="new-password" />
         <label className="cb-label mt-3">Sahkan Kata Laluan</label>
-        <input type="password" className="cb-input" value={f.confirm} onChange={set("confirm")} onKeyDown={(e) => e.key === "Enter" && submit()} autoComplete="new-password" />
+        <PasswordInput value={f.confirm} onChange={set("confirm")} onKeyDown={(e) => e.key === "Enter" && submit()} autoComplete="new-password" />
 
         <label className="mt-4 flex items-start gap-2 text-sm">
           <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} className="mt-1" />

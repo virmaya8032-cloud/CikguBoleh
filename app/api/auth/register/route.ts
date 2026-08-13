@@ -26,8 +26,15 @@ export async function POST(req: Request) {
   if (!agree) return NextResponse.json({ error: "Sila setuju dengan Terma & Privasi." }, { status: 400 });
 
   try {
-    if (await emailExists(email)) return NextResponse.json({ error: "E-mel ini telah didaftarkan. Sila Log Masuk." }, { status: 409 });
-    const user = await createUser({ email, display_name: name, password });
+    if (await emailExists(email)) return NextResponse.json({ ok: false, error: "E-mel ini telah didaftarkan. Sila Log Masuk." }, { status: 409 });
+    let user;
+    try {
+      user = await createUser({ email, display_name: name, password });
+    } catch (e) {
+      const code = (e as { code?: string })?.code;
+      if (code === "23505") return NextResponse.json({ ok: false, error: "E-mel ini telah didaftarkan. Sila Log Masuk." }, { status: 409 });
+      throw e;
+    }
     const token = await createUserToken({ uid: user.id, email: user.email, name: user.display_name, role: "user" });
     const res = NextResponse.json({ ok: true, user });
     res.cookies.set(USER_COOKIE, token, { httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production", path: "/", maxAge: 60 * 60 * 24 * 7 });

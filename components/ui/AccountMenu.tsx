@@ -15,7 +15,10 @@ export function AccountMenu() {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    fetch("/api/auth/me", { cache: "no-store" }).then((r) => r.json()).then(setMe).catch(() => setMe({ authenticated: false }));
+    const refresh = () => fetch("/api/auth/me", { cache: "no-store" }).then((r) => r.json()).then(setMe).catch(() => setMe({ authenticated: false }));
+    refresh();
+    window.addEventListener("cb-auth-changed", refresh);
+    return () => window.removeEventListener("cb-auth-changed", refresh);
   }, [pathname]);
   useEffect(() => {
     const h = (e: MouseEvent) => { if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false); };

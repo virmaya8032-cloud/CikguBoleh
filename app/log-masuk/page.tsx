@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Logo } from "@/components/ui/Logo";
+import { PasswordInput } from "@/components/ui/PasswordInput";
 
 export default function LogMasukPage() {
   const router = useRouter();
@@ -32,7 +33,7 @@ export default function LogMasukPage() {
         <label className="cb-label mt-5">E-mel</label>
         <input type="email" className="cb-input" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" autoFocus />
         <label className="cb-label mt-3">Kata Laluan</label>
-        <input type="password" className="cb-input" value={pw} onChange={(e) => setPw(e.target.value)} onKeyDown={(e) => e.key === "Enter" && submit()} autoComplete="current-password" />
+        <PasswordInput value={pw} onChange={(e) => setPw(e.target.value)} onKeyDown={(e) => e.key === "Enter" && submit()} autoComplete="current-password" />
 
         {err && <p className="mt-2 text-sm text-red-500">{err}</p>}
         <button onClick={submit} disabled={loading} className="cb-btn-primary mt-4 w-full">{loading ? "Menyemak…" : "LOG MASUK"}</button>

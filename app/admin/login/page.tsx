@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Lock } from "lucide-react";
 import { Logo } from "@/components/ui/Logo";
+import { PasswordInput } from "@/components/ui/PasswordInput";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -95,15 +96,7 @@ export default function AdminLoginPage() {
           />
 
           <label className="cb-label mt-3">Kata laluan</label>
-          <input
-            type="password"
-            required
-            autoComplete="current-password"
-            className="cb-input"
-            value={pw}
-            onChange={(e) => setPw(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && login()}
-          />
+          <PasswordInput value={pw} onChange={(e) => setPw(e.target.value)} onKeyDown={(e) => e.key === "Enter" && login()} autoComplete="current-password" />
 
           {err && (
             <p className="mt-2 flex items-center gap-1 text-sm text-red-500">
