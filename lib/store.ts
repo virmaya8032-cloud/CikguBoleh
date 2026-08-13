@@ -99,7 +99,7 @@ export async function listFeedback(filter?: {
       `SELECT id::text, name, email, display_name_mode, subject, message, category, status,
               allow_public_display, admin_reply, admin_replied_at, created_at, approved_at,
               user_id::text, auto_reply_status, admin_reply_email_status
-       FROM feedback ${w} ORDER BY created_at DESC LIMIT ${lim} OFFSET ${off}`,
+       FROM feedback ${w} ORDER BY (status='pending') DESC, created_at DESC LIMIT ${lim} OFFSET ${off}`,
       params
     );
   }
@@ -108,6 +108,7 @@ export async function listFeedback(filter?: {
   else if (filter?.status) rows = rows.filter((r) => r.status === filter.status);
   if (filter?.search) { const q = filter.search.toLowerCase(); rows = rows.filter((r) => [r.name, r.email, r.subject, r.message].some((v) => v.toLowerCase().includes(q))); }
   const off = filter?.offset ?? 0;
+  rows.sort((a, b) => (a.status === "pending" ? 0 : 1) - (b.status === "pending" ? 0 : 1) || b.created_at.localeCompare(a.created_at));
   return rows.slice(off, off + (filter?.limit ?? 200));
 }
 

@@ -25,6 +25,8 @@ function AdminFeedbackInner() {
   const [replyText, setReplyText] = useState("");
   const [sending, setSending] = useState(false);
 
+  const [busyId, setBusyId] = useState<string | null>(null);
+
   const load = useCallback(async () => {
     const p = new URLSearchParams();
     if (filter !== "all") p.set("status", filter);
@@ -36,13 +38,34 @@ function AdminFeedbackInner() {
   useEffect(() => { load(); }, [load]);
 
   async function act(id: string, patch: Record<string, unknown>) {
-    await fetch("/api/admin/feedback", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id, ...patch }) });
-    load();
+    setBusyId(id);
+    // Optimistik: kemas kini status serta-merta + alih mesej ke bawah sekali.
+    if (typeof patch.status === "string") {
+      const status = patch.status as string;
+      setItems((prev) => {
+        const target = prev.find((x) => x.id === id);
+        if (!target) return prev;
+        const rest = prev.filter((x) => x.id !== id);
+        return [...rest, { ...target, status }]; // pindah ke hujung senarai
+      });
+    }
+    try {
+      await fetch("/api/admin/feedback", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id, ...patch }) });
+    } finally {
+      setBusyId(null);
+      load(); // segerak semula kiraan/susunan sebenar di latar
+    }
   }
   async function del(id: string) {
     if (!confirm("Adakah anda pasti mahu memadam mesej ini?")) return;
-    await fetch("/api/admin/feedback", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) });
-    load();
+    setBusyId(id);
+    setItems((prev) => prev.filter((x) => x.id !== id)); // buang serta-merta
+    try {
+      await fetch("/api/admin/feedback", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) });
+    } finally {
+      setBusyId(null);
+      load();
+    }
   }
   async function sendReply() {
     if (!replyFor || !replyText.trim()) return;
@@ -81,7 +104,7 @@ function AdminFeedbackInner() {
       {items.length === 0 && <p className="text-sm muted">Tiada mesej dalam kategori ini.</p>}
       <div className="space-y-3">
         {items.map((f) => (
-          <div key={f.id} className="glass rounded-2xl p-4 shadow-card">
+          <div key={f.id} className={`glass rounded-2xl p-4 shadow-card transition-all duration-300 ${busyId === f.id ? "opacity-60" : ""}`}>
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div className="min-w-0">
                 <span className="font-semibold">{f.name}</span>
@@ -98,11 +121,11 @@ function AdminFeedbackInner() {
             {f.admin_reply && <div className="mt-2 rounded-lg bg-teal-50 p-2 text-sm dark:bg-teal-950/40"><b className="text-teal-700 dark:text-teal-300">Balasan: </b>{f.admin_reply}{f.admin_reply_email_status && <span className="ml-2 text-xs muted">(email: {f.admin_reply_email_status})</span>}</div>}
 
             <div className="mt-3 flex flex-wrap gap-2">
-              <button onClick={() => act(f.id, { status: "approved" })} className="cb-btn-ghost !py-1.5 text-xs"><Check className="h-3.5 w-3.5" /> Luluskan</button>
-              <button onClick={() => act(f.id, { status: "rejected" })} className="cb-btn-ghost !py-1.5 text-xs"><X className="h-3.5 w-3.5" /> Tolak</button>
-              <button onClick={() => act(f.id, { status: "hidden" })} className="cb-btn-ghost !py-1.5 text-xs"><EyeOff className="h-3.5 w-3.5" /> Sembunyi</button>
-              <button onClick={() => { setReplyFor(f); setReplyText(f.admin_reply ?? ""); }} className="cb-btn-ghost !py-1.5 text-xs"><Reply className="h-3.5 w-3.5" /> Balas Email</button>
-              <button onClick={() => del(f.id)} className="cb-btn !py-1.5 text-xs text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30"><Trash2 className="h-3.5 w-3.5" /> Padam</button>
+              <button disabled={busyId === f.id} onClick={() => act(f.id, { status: "approved" })} className="cb-btn-ghost !py-1.5 text-xs transition active:scale-95 hover:bg-teal-50 hover:text-teal-700 disabled:opacity-50 dark:hover:bg-teal-950/40"><Check className="h-3.5 w-3.5" /> Luluskan</button>
+              <button disabled={busyId === f.id} onClick={() => act(f.id, { status: "rejected" })} className="cb-btn-ghost !py-1.5 text-xs transition active:scale-95 disabled:opacity-50"><X className="h-3.5 w-3.5" /> Tolak</button>
+              <button disabled={busyId === f.id} onClick={() => act(f.id, { status: "hidden" })} className="cb-btn-ghost !py-1.5 text-xs transition active:scale-95 disabled:opacity-50"><EyeOff className="h-3.5 w-3.5" /> Sembunyi</button>
+              <button disabled={busyId === f.id} onClick={() => { setReplyFor(f); setReplyText(f.admin_reply ?? ""); }} className="cb-btn-ghost !py-1.5 text-xs transition active:scale-95 disabled:opacity-50"><Reply className="h-3.5 w-3.5" /> Balas Email</button>
+              <button disabled={busyId === f.id} onClick={() => del(f.id)} className="cb-btn !py-1.5 text-xs text-red-500 transition active:scale-95 hover:bg-red-50 disabled:opacity-50 dark:hover:bg-red-950/30"><Trash2 className="h-3.5 w-3.5" /> Padam</button>
             </div>
             {f.allow_public_display && f.status === "approved" && <p className="mt-2 text-xs text-teal-600">✓ Layak dipaparkan di Kata Cikgu.</p>}
           </div>
