@@ -27,56 +27,39 @@ export default function HomePage() {
   return (
     <>
       {/* Hero */}
-      <section className="relative overflow-hidden">
-        <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 pb-8 pt-14 md:pt-20 lg:grid-cols-[1.1fr_0.9fr]">
-          <div>
-            <span className="rise glass inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold text-teal-700 shadow-card dark:text-teal-300" style={{ animationDelay: "0ms" }}>
+      <section className="galaxy relative overflow-hidden">
+        <div className="neb" aria-hidden />
+        <div className="shimmer" aria-hidden />
+        <div className="stars" aria-hidden />
+        <div className="stars2" aria-hidden />
+        <div className="relative mx-auto grid max-w-7xl items-center gap-8 px-4 pb-16 pt-14 md:pt-16 lg:grid-cols-[1fr_0.85fr]">
+          <div className="glasspanel hidden lg:block" aria-hidden />
+          <div className="halo hidden lg:block" aria-hidden />
+          <div className="relative z-[3] text-center lg:text-left">
+            <span className="rise inline-flex items-center gap-1.5 rounded-full bg-white/12 px-3 py-1 text-xs font-semibold text-emerald-100 ring-1 ring-white/25 backdrop-blur" style={{ animationDelay: "0ms" }}>
               <HeartHandshake className="h-3.5 w-3.5" /> Untuk guru Malaysia
             </span>
-            <h1 className="rise mt-5 font-display text-5xl font-extrabold leading-[1.02] tracking-tight md:text-7xl" style={{ animationDelay: "60ms" }}>
-              <span className="text-gradient">Cikgu</span><span className="text-marigold-500">Boleh</span>
+            <h1 className="rise mt-5 font-display text-6xl font-extrabold leading-[1.02] tracking-tight md:text-7xl" style={{ animationDelay: "60ms" }}>
+              <span className="text-teal-300">Cikgu</span><span className="text-marigold-400">Boleh</span>
             </h1>
-            <p className="rise mt-4 font-display text-2xl font-bold md:text-4xl" style={{ animationDelay: "120ms" }}>
-              Isi Sekali. <span className="muted">Semua Siap.</span>
+            <p className="rise mt-4 font-display text-2xl font-bold text-white md:text-4xl" style={{ animationDelay: "120ms" }}>
+              Isi Sekali. <span className="text-emerald-200/85">Semua Siap.</span>
             </p>
-            <p className="rise mt-3 max-w-xl text-base muted md:text-lg" style={{ animationDelay: "180ms" }}>
-              Platform AI & Toolbox lengkap untuk guru Malaysia. Semua alat cikgu dalam satu tempat.
+            <p className="rise mx-auto mt-3 max-w-xl text-base text-emerald-50/85 md:text-lg lg:mx-0" style={{ animationDelay: "180ms" }}>
+              Platform AI &amp; Toolbox lengkap untuk guru Malaysia. Semua alat cikgu dalam satu tempat.
             </p>
-            <div className="rise mt-7 flex flex-wrap gap-3" style={{ animationDelay: "240ms" }}>
+            <div className="rise mt-7 flex flex-wrap justify-center gap-3 lg:justify-start" style={{ animationDelay: "240ms" }}>
               <Link href="/alat" className="cb-btn-primary">
                 Mula Sekarang <ArrowRight className="h-4 w-4" />
               </Link>
-              <Link href="/ai" className="cb-btn-ghost">Cuba CikguBoleh AI</Link>
+              <Link href="/ai" className="inline-flex items-center gap-2 rounded-xl bg-white/14 px-4 py-2.5 font-semibold text-white ring-1 ring-white/30 backdrop-blur transition hover:bg-white/22">Cuba CikguBoleh AI</Link>
             </div>
           </div>
 
-          {/* Signature: fill-once → all-ready flow */}
-          <div className="rise hidden lg:block" style={{ animationDelay: "300ms" }}>
-            <div className="glass shadow-glow relative mx-auto max-w-sm rounded-3xl p-5 md:animate-float">
-              <div className="eyebrow text-teal-600 dark:text-teal-300">Isi sekali</div>
-              <div className="mt-3 space-y-2">
-                {[["Mata Pelajaran", "Matematik"], ["Tajuk", "Pecahan"], ["Kelas", "Tahun 4"]].map(([k, v]) => (
-                  <div key={k} className="surface flex items-center justify-between rounded-xl px-3 py-2 text-sm">
-                    <span className="muted">{k}</span><span className="font-semibold">{v}</span>
-                  </div>
-                ))}
-              </div>
-              <div className="my-4 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-teal-600 dark:text-teal-300">
-                <span className="h-px flex-1 bg-teal-500/30" /> Semua siap <span className="h-px flex-1 bg-teal-500/30" />
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                {[
-                  ["RPH", "bg-teal-100 text-teal-700 dark:bg-teal-950/60 dark:text-teal-300"],
-                  ["Soalan", "bg-sky-100 text-sky-700 dark:bg-sky-950/60 dark:text-sky-300"],
-                  ["Markah", "bg-violet-100 text-violet-700 dark:bg-violet-950/60 dark:text-violet-300"],
-                  ["Sijil", "bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300"],
-                ].map(([label, cls]) => (
-                  <div key={label} className={`flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold ${cls}`}>
-                    <Check className="h-4 w-4" /> {label}
-                  </div>
-                ))}
-              </div>
-            </div>
+          {/* Logo utama CikguBoleh (terapung) */}
+          <div className="rise relative z-[3] flex justify-center" style={{ animationDelay: "300ms" }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo-hero.png" alt="Logo CikguBoleh" width={440} height={440} className="hero-logo w-64 max-w-full sm:w-80 lg:w-[430px]" />
           </div>
         </div>
       </section>

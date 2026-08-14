@@ -20,10 +20,13 @@ export async function GET(req: Request) {
 
 export async function PATCH(req: Request) {
   if (!(await requireAdmin())) return NextResponse.json({ error: "Tidak dibenarkan." }, { status: 401 });
-  const { id, status } = await req.json();
-  const row = await updateFeedback(String(id), { status });
+  const { id, status, allow_public_display } = await req.json();
+  const patch: { status?: FeedbackStatus; allow_public_display?: boolean } = {};
+  if (typeof status === "string") patch.status = status as FeedbackStatus;
+  if (typeof allow_public_display === "boolean") patch.allow_public_display = allow_public_display;
+  const row = await updateFeedback(String(id), patch);
   if (!row) return NextResponse.json({ error: "Tidak dijumpai." }, { status: 404 });
-  await audit(`feedback_${status}`, "feedback", String(id));
+  await audit(`feedback_${status ?? "update"}`, "feedback", String(id));
 
   // Optional approval email (idempotent-ish; best effort).
   if (status === "approved" && emailConfigured()) {

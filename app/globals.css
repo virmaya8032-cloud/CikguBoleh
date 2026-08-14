@@ -276,3 +276,83 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .page-enter { animation: none; }
 }
+
+/* ===== Hero Galaxy Hijau-Oren (B3) + animasi ===== */
+.galaxy {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(150deg, #052f2a 0%, #0a5049 52%, #063b34 100%);
+}
+/* Lapisan nebula (awan berkilau) yang beralun */
+.galaxy .neb {
+  position: absolute; inset: -10%; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(600px 380px at 30% 28%, rgba(16,185,129,.45), transparent 60%),
+    radial-gradient(520px 360px at 72% 34%, rgba(20,184,166,.40), transparent 60%),
+    radial-gradient(420px 300px at 60% 12%, rgba(249,146,60,.28), transparent 60%),
+    radial-gradient(700px 460px at 50% 92%, rgba(4,26,22,.90), transparent 62%);
+}
+/* Awan shimmer berpusar perlahan */
+.galaxy .shimmer {
+  position: absolute; inset: -30%; z-index: 0; opacity: .28; filter: blur(34px); pointer-events: none;
+  background: conic-gradient(from 200deg at 50% 40%, rgba(16,185,129,.55), rgba(249,146,60,.32), rgba(20,184,166,.55), rgba(16,185,129,.55));
+}
+/* Dua lapisan bintang untuk kesan berkelip berlapis */
+.galaxy .stars, .galaxy .stars2 {
+  position: absolute; inset: 0; z-index: 1; pointer-events: none;
+}
+.galaxy .stars {
+  background-image:
+    radial-gradient(1.6px 1.6px at 12% 22%, rgba(255,255,255,.95), transparent),
+    radial-gradient(1.3px 1.3px at 26% 40%, rgba(255,255,255,.75), transparent),
+    radial-gradient(1.5px 1.5px at 40% 18%, rgba(255,236,190,.9), transparent),
+    radial-gradient(1.2px 1.2px at 55% 32%, rgba(255,255,255,.65), transparent),
+    radial-gradient(1.7px 1.7px at 68% 22%, rgba(255,255,255,.9), transparent),
+    radial-gradient(1.3px 1.3px at 80% 40%, rgba(190,255,235,.85), transparent),
+    radial-gradient(1.2px 1.2px at 33% 62%, rgba(255,255,255,.65), transparent),
+    radial-gradient(1.5px 1.5px at 75% 68%, rgba(255,255,255,.75), transparent);
+}
+.galaxy .stars2 {
+  background-image:
+    radial-gradient(1.4px 1.4px at 18% 80%, rgba(255,236,190,.8), transparent),
+    radial-gradient(1.6px 1.6px at 90% 78%, rgba(255,255,255,.85), transparent),
+    radial-gradient(1.3px 1.3px at 48% 84%, rgba(255,255,255,.7), transparent),
+    radial-gradient(1.5px 1.5px at 62% 12%, rgba(190,255,235,.8), transparent),
+    radial-gradient(1.2px 1.2px at 8% 52%, rgba(255,255,255,.6), transparent),
+    radial-gradient(1.4px 1.4px at 84% 20%, rgba(255,236,190,.75), transparent);
+}
+/* Panel kaca gelap di belakang teks (jamin kontras) */
+.galaxy .glasspanel {
+  position: absolute; left: 16px; top: 16px; bottom: 16px; width: 58%; z-index: 2;
+  border-radius: 28px;
+  background: linear-gradient(120deg, rgba(2,20,17,.60), rgba(2,20,17,.26));
+  border: 1px solid rgba(255,255,255,.14);
+  backdrop-filter: blur(7px);
+  box-shadow: 0 20px 60px rgba(0,0,0,.4);
+}
+@media (max-width: 1023px) { .galaxy .glasspanel { width: auto; right: 16px; bottom: auto; height: auto; } }
+/* Halo di belakang logo */
+.galaxy .halo {
+  position: absolute; right: 6%; top: 42%; transform: translateY(-50%);
+  width: 420px; height: 420px; border-radius: 50%; z-index: 2; pointer-events: none;
+  background: radial-gradient(circle, rgba(253,186,116,.30), rgba(255,255,255,.05) 55%, transparent 70%);
+  filter: blur(6px);
+}
+
+/* Animasi */
+@media (prefers-reduced-motion: no-preference) {
+  .galaxy .stars  { animation: twinkleA 3.4s ease-in-out infinite; }
+  .galaxy .stars2 { animation: twinkleB 2.6s ease-in-out infinite; }
+  .galaxy .shimmer { animation: swirl 26s linear infinite; transform-origin: 50% 45%; }
+  .galaxy .neb { animation: drift 18s ease-in-out infinite alternate; }
+  .galaxy .halo { animation: pulseHalo 5s ease-in-out infinite; }
+  .galaxy .hero-logo { animation: floaty 6s ease-in-out infinite; }
+}
+@keyframes twinkleA { 0%,100%{opacity:.45} 50%{opacity:1} }
+@keyframes twinkleB { 0%,100%{opacity:1} 50%{opacity:.35} }
+@keyframes swirl { to { transform: rotate(360deg); } }
+@keyframes drift { from { transform: translate3d(-14px,-8px,0) scale(1.02); } to { transform: translate3d(16px,10px,0) scale(1.05); } }
+@keyframes pulseHalo { 0%,100%{opacity:.7; transform:translateY(-50%) scale(1);} 50%{opacity:1; transform:translateY(-50%) scale(1.06);} }
+@keyframes floaty { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+
+.hero-logo { filter: drop-shadow(0 22px 50px rgba(0,0,0,.55)); }

@@ -131,6 +131,7 @@ export async function updateFeedback(id: string, patch: Partial<Feedback>): Prom
     const push = (col: string, val: unknown) => { params.push(val); sets.push(`${col} = $${params.length}`); };
     if (patch.status) push("status", patch.status);
     if (patch.status === "approved") sets.push(`approved_at = COALESCE(approved_at, now())`);
+    if (typeof patch.allow_public_display === "boolean") push("allow_public_display", patch.allow_public_display);
     if (typeof patch.admin_reply === "string") { push("admin_reply", patch.admin_reply); sets.push(`admin_replied_at = now()`); }
     if (typeof patch.admin_reply_email_status === "string") push("admin_reply_email_status", patch.admin_reply_email_status);
     if (typeof patch.auto_reply_status === "string") push("auto_reply_status", patch.auto_reply_status);

@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { AdminShell, waktuMY } from "@/components/admin/AdminShell";
-import { Check, X, EyeOff, Trash2, Reply, Download, Search } from "lucide-react";
+import { Check, X, EyeOff, Trash2, Reply, Download, Search, Globe } from "lucide-react";
 
 interface Fb {
   id: string; name: string; email: string; subject: string; message: string; category: string;
@@ -39,16 +39,17 @@ function AdminFeedbackInner() {
 
   async function act(id: string, patch: Record<string, unknown>) {
     setBusyId(id);
-    // Optimistik: kemas kini status serta-merta + alih mesej ke bawah sekali.
-    if (typeof patch.status === "string") {
-      const status = patch.status as string;
-      setItems((prev) => {
-        const target = prev.find((x) => x.id === id);
-        if (!target) return prev;
+    // Optimistik: kemas kini serta-merta. Alih ke bawah hanya bila status berubah.
+    setItems((prev) => {
+      const target = prev.find((x) => x.id === id);
+      if (!target) return prev;
+      const updated = { ...target, ...(typeof patch.status === "string" ? { status: patch.status as string } : {}), ...(typeof patch.allow_public_display === "boolean" ? { allow_public_display: patch.allow_public_display as boolean } : {}) };
+      if (typeof patch.status === "string") {
         const rest = prev.filter((x) => x.id !== id);
-        return [...rest, { ...target, status }]; // pindah ke hujung senarai
-      });
-    }
+        return [...rest, updated]; // pindah ke hujung
+      }
+      return prev.map((x) => (x.id === id ? updated : x));
+    });
     try {
       await fetch("/api/admin/feedback", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id, ...patch }) });
     } finally {
@@ -125,6 +126,11 @@ function AdminFeedbackInner() {
               <button disabled={busyId === f.id} onClick={() => act(f.id, { status: "rejected" })} className="cb-btn-ghost !py-1.5 text-xs transition active:scale-95 disabled:opacity-50"><X className="h-3.5 w-3.5" /> Tolak</button>
               <button disabled={busyId === f.id} onClick={() => act(f.id, { status: "hidden" })} className="cb-btn-ghost !py-1.5 text-xs transition active:scale-95 disabled:opacity-50"><EyeOff className="h-3.5 w-3.5" /> Sembunyi</button>
               <button disabled={busyId === f.id} onClick={() => { setReplyFor(f); setReplyText(f.admin_reply ?? ""); }} className="cb-btn-ghost !py-1.5 text-xs transition active:scale-95 disabled:opacity-50"><Reply className="h-3.5 w-3.5" /> Balas Email</button>
+              {f.status === "approved" && f.allow_public_display ? (
+                <button disabled={busyId === f.id} onClick={() => act(f.id, { allow_public_display: false })} className="cb-btn-ghost !py-1.5 text-xs transition active:scale-95 disabled:opacity-50"><EyeOff className="h-3.5 w-3.5" /> Nyahpapar Awam</button>
+              ) : (
+                <button disabled={busyId === f.id} onClick={() => act(f.id, { status: "approved", allow_public_display: true })} className="cb-btn-ghost !py-1.5 text-xs font-semibold text-teal-700 transition active:scale-95 hover:bg-teal-50 disabled:opacity-50 dark:text-teal-300 dark:hover:bg-teal-950/40"><Globe className="h-3.5 w-3.5" /> Papar di Kata Cikgu</button>
+              )}
               <button disabled={busyId === f.id} onClick={() => del(f.id)} className="cb-btn !py-1.5 text-xs text-red-500 transition active:scale-95 hover:bg-red-50 disabled:opacity-50 dark:hover:bg-red-950/30"><Trash2 className="h-3.5 w-3.5" /> Padam</button>
             </div>
             {f.allow_public_display && f.status === "approved" && <p className="mt-2 text-xs text-teal-600">✓ Layak dipaparkan di Kata Cikgu.</p>}
