@@ -403,22 +403,7 @@ body {
 .ab-glow-1 { width: 46vw; height: 46vw; background: rgba(16,185,129,.16); top: -8%; left: -6%; }
 .ab-glow-2 { width: 40vw; height: 40vw; background: rgba(20,184,166,.14); top: 40%; right: -8%; left: auto; }
 .ab-glow-3 { width: 34vw; height: 34vw; background: rgba(249,146,60,.10); bottom: -10%; left: 30%; }
-.ab-word {
-  position: absolute; pointer-events: none; user-select: none;
-  font-family: var(--font-display, inherit); font-weight: 800; letter-spacing: .06em;
-  white-space: nowrap;
-  text-transform: uppercase;
-  will-change: transform, opacity;
-  opacity: var(--ab-op, .08);
-}
-@media (prefers-reduced-motion: no-preference) {
-  .ab-word { animation: abDrift var(--ab-dur, 40s) ease-in-out infinite alternate; }
-}
-.ab-word .ab-cikgu { color: #0d9488; }
-.ab-word .ab-boleh { color: #f97316; }
-.dark .ab-word .ab-cikgu { color: #2dd4bf; }
-.dark .ab-word .ab-boleh { color: #fdba74; }
-
+.dark .dark 
 @media (prefers-reduced-motion: no-preference) {
   .ab-glow-1 { animation: abGlow1 24s ease-in-out infinite alternate; }
   .ab-glow-2 { animation: abGlow2 30s ease-in-out infinite alternate; }
@@ -431,7 +416,7 @@ body {
 
 /* Reduce motion: hentikan semua animasi latar */
 @media (prefers-reduced-motion: reduce) {
-  .ab-glow, .ab-word { animation: none !important; }
+  .ab-glow { animation: none !important; }
 }
 
 /* ===== Tajuk warna jenama (teal -> oren, macam CikguBoleh) ===== */
@@ -475,9 +460,3 @@ body {
   opacity: 0; transition: opacity .25s ease; z-index: 2;
 }
 .tool-card:hover::before { opacity: 1; }
-
-@keyframes abDrift {
-  0%   { transform: translate3d(0,0,0);        opacity: calc(var(--ab-op) * .7); }
-  50%  { transform: translate3d(14px,-16px,0);  opacity: var(--ab-op); }
-  100% { transform: translate3d(-10px,10px,0);  opacity: calc(var(--ab-op) * .8); }
-}

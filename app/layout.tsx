@@ -6,6 +6,7 @@ import { MobileNav } from "@/components/ui/MobileNav";
 import { ToastProvider } from "@/components/ui/Toast";
 import { PageTracker } from "@/components/ui/PageTracker";
 import { AnimatedBackground } from "@/components/ui/AnimatedBackground";
+import { FlyingWordsBackground } from "@/components/ui/FlyingWordsBackground";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://cikgu-boleh.vercel.app";
 
@@ -56,6 +57,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="min-h-dvh font-sans antialiased">
         <AnimatedBackground />
+        <FlyingWordsBackground />
         <ToastProvider>
           <PageTracker />
           <Header />
