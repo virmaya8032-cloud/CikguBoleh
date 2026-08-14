@@ -5,7 +5,6 @@ import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import { AccountMenu } from "./AccountMenu";
-import { Logo } from "./Logo";
 
 const NAV = [
   { label: "Utama", href: "/" },
@@ -27,7 +26,8 @@ export function Header() {
     <header className="glass sticky top-0 z-40 no-print" style={{ borderLeft: "none", borderRight: "none", borderTop: "none" }}>
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3">
         <Link href="/" className="group flex items-center gap-2 font-display font-extrabold">
-          <Logo size={32} />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo-hero.png" alt="Logo CikguBoleh" width={38} height={38} className="h-9 w-9 shrink-0 object-contain" />
           <span className="text-lg tracking-tight">
             <span className="text-gradient">Cikgu</span><span className="text-marigold-500">Boleh</span>
           </span>

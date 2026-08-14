@@ -33,22 +33,21 @@ export default function HomePage() {
         <div className="stars" aria-hidden />
         <div className="stars2" aria-hidden />
         <div className="relative mx-auto grid max-w-7xl items-center gap-8 px-4 pb-16 pt-14 md:pt-16 lg:grid-cols-[1fr_0.85fr]">
-          <div className="glasspanel hidden lg:block" aria-hidden />
           <div className="halo hidden lg:block" aria-hidden />
-          <div className="relative z-[3] text-center lg:text-left">
-            <span className="rise inline-flex items-center gap-1.5 rounded-full bg-white/12 px-3 py-1 text-xs font-semibold text-emerald-100 ring-1 ring-white/25 backdrop-blur" style={{ animationDelay: "0ms" }}>
+          <div className="glasswrap rise relative z-[3] text-center lg:text-left" style={{ animationDelay: "40ms" }}>
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-white/12 px-3 py-1 text-xs font-semibold text-emerald-100 ring-1 ring-white/25 backdrop-blur">
               <HeartHandshake className="h-3.5 w-3.5" /> Untuk guru Malaysia
             </span>
-            <h1 className="rise mt-5 font-display text-6xl font-extrabold leading-[1.02] tracking-tight md:text-7xl" style={{ animationDelay: "60ms" }}>
+            <h1 className="mt-5 font-display text-7xl font-extrabold leading-[0.98] tracking-tight md:text-8xl">
               <span style={{ color: "#2dd4bf" }}>Cikgu</span><span style={{ color: "#fb923c" }}>Boleh</span>
             </h1>
-            <p className="rise mt-4 font-display text-2xl font-bold text-white md:text-4xl" style={{ animationDelay: "120ms" }}>
+            <p className="mt-4 font-display text-3xl font-bold text-white md:text-4xl">
               Isi Sekali. <span className="text-emerald-200/85">Semua Siap.</span>
             </p>
-            <p className="rise mx-auto mt-3 max-w-xl text-base text-emerald-50/85 md:text-lg lg:mx-0" style={{ animationDelay: "180ms" }}>
+            <p className="mx-auto mt-3 max-w-xl text-base text-emerald-50/85 md:text-lg lg:mx-0">
               Platform AI &amp; Toolbox lengkap untuk guru Malaysia. Semua alat cikgu dalam satu tempat.
             </p>
-            <div className="rise mt-7 flex flex-wrap justify-center gap-3 lg:justify-start" style={{ animationDelay: "240ms" }}>
+            <div className="mt-7 flex flex-wrap justify-center gap-3 lg:justify-start">
               <Link href="/alat" className="cb-btn-primary">
                 Mula Sekarang <ArrowRight className="h-4 w-4" />
               </Link>
@@ -60,18 +59,18 @@ export default function HomePage() {
           <div className="rise relative z-[3] flex justify-center" style={{ animationDelay: "300ms" }}>
             <span className="logo-ring" aria-hidden />
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo-hero.png" alt="Logo CikguBoleh" width={440} height={440} className="hero-logo relative z-[1] w-64 max-w-full sm:w-80 lg:w-[430px]" />
+            <img src="/logo-hero.png" alt="Logo CikguBoleh" width={440} height={440} className="hero-logo relative z-[1] w-64 max-w-full sm:w-80 lg:w-[440px]" />
           </div>
         </div>
       </section>
       <div className="home-green relative">
         <span className="hg-glow hg-glow-a" aria-hidden />
         <span className="hg-glow hg-glow-b" aria-hidden />
-        <div className="relative z-[1]">
+        <div className="relative z-[1] pt-12 md:pt-16">
 
       {/* Search */}
       <section className="mx-auto max-w-7xl px-4 py-8">
-        <h2 className="font-display text-xl font-bold">Apa cikgu nak buat hari ini?</h2>
+        <h2 className="rise font-display text-2xl font-extrabold text-[#0f3b35] dark:text-emerald-200">Apa cikgu nak buat hari ini?</h2>
         <div className="mt-3">
           <ToolExplorer compact />
         </div>

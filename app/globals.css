@@ -46,8 +46,9 @@ body {
     radial-gradient(34% 30% at 86% 12%, rgba(34, 211, 238, 0.18), transparent 60%),
     radial-gradient(46% 42% at 78% 82%, rgba(13, 124, 116, 0.22), transparent 62%),
     radial-gradient(30% 30% at 22% 88%, rgba(249, 122, 18, 0.12), transparent 60%);
-  filter: blur(46px) saturate(1.15);
-  animation: aurora 28s ease-in-out infinite alternate;
+  filter: blur(44px) saturate(1.2);
+  opacity: .85;
+  animation: aurora 22s ease-in-out infinite alternate;
 }
 .dark .aurora-bg { opacity: 0.55; }
 @keyframes aurora {
@@ -321,16 +322,16 @@ body {
     radial-gradient(1.2px 1.2px at 8% 52%, rgba(255,255,255,.6), transparent),
     radial-gradient(1.4px 1.4px at 84% 20%, rgba(255,236,190,.75), transparent);
 }
-/* Panel kaca gelap di belakang teks (jamin kontras) */
-.galaxy .glasspanel {
-  position: absolute; left: 16px; top: 16px; bottom: 16px; width: 58%; z-index: 2;
-  border-radius: 28px;
-  background: linear-gradient(120deg, rgba(2,20,17,.60), rgba(2,20,17,.26));
-  border: 1px solid rgba(255,255,255,.14);
-  backdrop-filter: blur(7px);
-  box-shadow: 0 20px 60px rgba(0,0,0,.4);
+/* Kotak kaca yang balut kandungan teks (kemas, tiada ruang kosong) */
+.galaxy .glasswrap {
+  border-radius: 30px;
+  padding: 34px 34px;
+  background: linear-gradient(120deg, rgba(2,22,18,.55), rgba(2,22,18,.24));
+  border: 1px solid rgba(255,255,255,.15);
+  backdrop-filter: blur(9px);
+  box-shadow: 0 22px 60px rgba(0,0,0,.4);
 }
-@media (max-width: 1023px) { .galaxy .glasspanel { width: auto; right: 16px; bottom: auto; height: auto; } }
+@media (max-width: 640px){ .galaxy .glasswrap{ padding: 24px 20px; } }
 /* Halo di belakang logo */
 .galaxy .halo {
   position: absolute; right: 6%; top: 42%; transform: translateY(-50%);
@@ -361,13 +362,12 @@ body {
 .home-green {
   position: relative;
   background: linear-gradient(180deg,
-    #0a4a42 0%,     /* sambung dari hero */
-    #0f5e54 6%,
-    #17796c 12%,
-    #bfe9df 30%,
-    #d9f2ea 52%,
-    #e6f6f0 74%,
-    #dff2ec 100%);  /* bawah kekal kehijauan, bukan putih */
+    #0a4a42 0px,
+    #2a8a7c 80px,
+    #cdeee6 190px,
+    #e2f5ef 620px,
+    #e8f7f1 1400px,
+    #e8f7f1 100%);
 }
 .home-green .hg-glow {
   position: absolute; z-index: 0; border-radius: 50%; filter: blur(70px); pointer-events: none;
@@ -394,3 +394,38 @@ body {
   .logo-ring { animation: ringspin 14s linear infinite; }
 }
 @keyframes ringspin { to { transform: translate(-50%,-50%) rotate(360deg); } }
+
+/* ===== AnimatedBackground global ===== */
+.ab-root {
+  position: fixed; inset: 0; z-index: -10; overflow: hidden; pointer-events: none;
+}
+.ab-glow { position: absolute; border-radius: 50%; filter: blur(80px); opacity: .5; }
+.ab-glow-1 { width: 46vw; height: 46vw; background: rgba(16,185,129,.16); top: -8%; left: -6%; }
+.ab-glow-2 { width: 40vw; height: 40vw; background: rgba(20,184,166,.14); top: 40%; right: -8%; left: auto; }
+.ab-glow-3 { width: 34vw; height: 34vw; background: rgba(249,146,60,.10); bottom: -10%; left: 30%; }
+.ab-word {
+  position: absolute; pointer-events: none; user-select: none;
+  font-family: var(--font-display, inherit); font-weight: 800; letter-spacing: .06em;
+  white-space: nowrap; color: #0d7c74;
+  text-transform: uppercase;
+  will-change: transform;
+}
+.dark .ab-word { color: #5eead4; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .ab-glow-1 { animation: abGlow1 24s ease-in-out infinite alternate; }
+  .ab-glow-2 { animation: abGlow2 30s ease-in-out infinite alternate; }
+  .ab-glow-3 { animation: abGlow3 34s ease-in-out infinite alternate; }
+}
+@keyframes abGlow1 { from { transform: translate(0,0) scale(1);} to { transform: translate(40px,30px) scale(1.1);} }
+@keyframes abGlow2 { from { transform: translate(0,0) scale(1.05);} to { transform: translate(-40px,-24px) scale(1);} }
+@keyframes abGlow3 { from { transform: translate(0,0) scale(1);} to { transform: translate(24px,-30px) scale(1.08);} }
+
+@keyframes abFloatA { from { transform: translate3d(0,0,0) rotate(-2deg);} to { transform: translate3d(24px,-26px,0) rotate(2deg);} }
+@keyframes abFloatB { from { transform: translate3d(0,0,0) rotate(2deg);} to { transform: translate3d(-30px,18px,0) rotate(-3deg);} }
+@keyframes abFloatC { from { transform: translate3d(0,0,0) rotate(-1deg);} to { transform: translate3d(18px,28px,0) rotate(3deg);} }
+
+/* Reduce motion: hentikan semua animasi latar */
+@media (prefers-reduced-motion: reduce) {
+  .ab-glow, .ab-word { animation: none !important; }
+}
