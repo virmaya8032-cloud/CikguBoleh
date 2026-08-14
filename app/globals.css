@@ -406,11 +406,18 @@ body {
 .ab-word {
   position: absolute; pointer-events: none; user-select: none;
   font-family: var(--font-display, inherit); font-weight: 800; letter-spacing: .06em;
-  white-space: nowrap; color: #0d7c74;
+  white-space: nowrap;
   text-transform: uppercase;
-  will-change: transform;
+  will-change: transform, opacity;
+  opacity: var(--ab-op, .08);
 }
-.dark .ab-word { color: #5eead4; }
+@media (prefers-reduced-motion: no-preference) {
+  .ab-word { animation: abDrift var(--ab-dur, 40s) ease-in-out infinite alternate; }
+}
+.ab-word .ab-cikgu { color: #0d9488; }
+.ab-word .ab-boleh { color: #f97316; }
+.dark .ab-word .ab-cikgu { color: #2dd4bf; }
+.dark .ab-word .ab-boleh { color: #fdba74; }
 
 @media (prefers-reduced-motion: no-preference) {
   .ab-glow-1 { animation: abGlow1 24s ease-in-out infinite alternate; }
@@ -421,11 +428,56 @@ body {
 @keyframes abGlow2 { from { transform: translate(0,0) scale(1.05);} to { transform: translate(-40px,-24px) scale(1);} }
 @keyframes abGlow3 { from { transform: translate(0,0) scale(1);} to { transform: translate(24px,-30px) scale(1.08);} }
 
-@keyframes abFloatA { from { transform: translate3d(0,0,0) rotate(-2deg);} to { transform: translate3d(24px,-26px,0) rotate(2deg);} }
-@keyframes abFloatB { from { transform: translate3d(0,0,0) rotate(2deg);} to { transform: translate3d(-30px,18px,0) rotate(-3deg);} }
-@keyframes abFloatC { from { transform: translate3d(0,0,0) rotate(-1deg);} to { transform: translate3d(18px,28px,0) rotate(3deg);} }
 
 /* Reduce motion: hentikan semua animasi latar */
 @media (prefers-reduced-motion: reduce) {
   .ab-glow, .ab-word { animation: none !important; }
+}
+
+/* ===== Tajuk warna jenama (teal -> oren, macam CikguBoleh) ===== */
+.brand-heading {
+  color: #f97316;                         /* oren */
+  -webkit-text-stroke: 1.4px #0b3d33;     /* border hijau gelap */
+  paint-order: stroke fill;               /* border di belakang, isian di depan (kemas) */
+  letter-spacing: -0.01em;
+}
+.dark .brand-heading {
+  color: #fb923c;
+  -webkit-text-stroke: 1.4px #052e27;
+  paint-order: stroke fill;
+}
+
+/* ===== Kotak hero lebih nampak + warna cantik ===== */
+.galaxy .glasswrap {
+  border: 1px solid rgba(94,234,212,.35);
+  box-shadow: 0 22px 60px rgba(0,0,0,.4), 0 0 0 1px rgba(249,146,60,.12) inset,
+              0 0 40px rgba(13,148,136,.25);
+}
+
+/* ===== Kad alat: gabungan warna lembut + jelas ===== */
+.tool-card {
+  background: linear-gradient(150deg, #ffffff 0%, #f2fbf8 100%);
+  border: 1px solid #d3ece6;
+  box-shadow: 0 6px 18px rgba(13,124,116,.06);
+}
+.tool-card:hover {
+  border-color: #14b8a6;
+  box-shadow: 0 14px 34px rgba(13,124,116,.16);
+}
+.dark .tool-card {
+  background: linear-gradient(150deg, rgba(255,255,255,.04), rgba(20,184,166,.06));
+  border: 1px solid rgba(255,255,255,.10);
+}
+/* aksen bar kecil di atas kad (teal->oren) */
+.tool-card::before {
+  content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, #0d9488, #f97316);
+  opacity: 0; transition: opacity .25s ease; z-index: 2;
+}
+.tool-card:hover::before { opacity: 1; }
+
+@keyframes abDrift {
+  0%   { transform: translate3d(0,0,0);        opacity: calc(var(--ab-op) * .7); }
+  50%  { transform: translate3d(14px,-16px,0);  opacity: var(--ab-op); }
+  100% { transform: translate3d(-10px,10px,0);  opacity: calc(var(--ab-op) * .8); }
 }

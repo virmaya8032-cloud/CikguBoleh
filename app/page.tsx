@@ -70,7 +70,7 @@ export default function HomePage() {
 
       {/* Search */}
       <section className="mx-auto max-w-7xl px-4 py-8">
-        <h2 className="rise font-display text-2xl font-extrabold text-[#0f3b35] dark:text-emerald-200">Apa cikgu nak buat hari ini?</h2>
+        <h2 className="rise brand-heading font-display text-2xl font-extrabold">Apa cikgu nak buat hari ini?</h2>
         <div className="mt-3">
           <ToolExplorer compact />
         </div>
@@ -95,7 +95,7 @@ export default function HomePage() {
       {/* Popular tools */}
       <section className="mx-auto max-w-7xl px-4 py-8">
         <div className="flex items-end justify-between">
-          <h2 className="font-display text-2xl font-extrabold">Alat Popular</h2>
+          <h2 className="brand-heading font-display text-2xl font-extrabold">Alat Popular</h2>
           <Link href="/alat" className="text-sm font-semibold text-teal-600 hover:underline">Semua →</Link>
         </div>
         <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -164,7 +164,7 @@ export default function HomePage() {
 
       {/* Why */}
       <section className="mx-auto max-w-7xl px-4 py-8">
-        <h2 className="font-display text-2xl font-extrabold">Kenapa CikguBoleh</h2>
+        <h2 className="brand-heading font-display text-2xl font-extrabold">Kenapa CikguBoleh</h2>
         <div className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-3">
           {WHY.map(({ icon: I, title, body }) => (
             <div key={title} className="surface rounded-2xl p-5 shadow-card">
@@ -180,7 +180,7 @@ export default function HomePage() {
 
       {/* All tools by category */}
       <section className="mx-auto max-w-7xl px-4 py-8">
-        <h2 className="font-display text-2xl font-extrabold">Semua Alat</h2>
+        <h2 className="brand-heading font-display text-2xl font-extrabold">Semua Alat</h2>
         <div className="mt-5 space-y-8">
           {CATEGORIES.map((c) => {
             const list = toolsByCategory(c);
