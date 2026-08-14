@@ -40,7 +40,7 @@ export default function HomePage() {
               <HeartHandshake className="h-3.5 w-3.5" /> Untuk guru Malaysia
             </span>
             <h1 className="rise mt-5 font-display text-6xl font-extrabold leading-[1.02] tracking-tight md:text-7xl" style={{ animationDelay: "60ms" }}>
-              <span className="text-teal-300">Cikgu</span><span className="text-marigold-400">Boleh</span>
+              <span style={{ color: "#2dd4bf" }}>Cikgu</span><span style={{ color: "#fb923c" }}>Boleh</span>
             </h1>
             <p className="rise mt-4 font-display text-2xl font-bold text-white md:text-4xl" style={{ animationDelay: "120ms" }}>
               Isi Sekali. <span className="text-emerald-200/85">Semua Siap.</span>
@@ -56,13 +56,18 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Logo utama CikguBoleh (terapung) */}
+          {/* Logo utama CikguBoleh (terapung + cincin cahaya berputar) */}
           <div className="rise relative z-[3] flex justify-center" style={{ animationDelay: "300ms" }}>
+            <span className="logo-ring" aria-hidden />
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo-hero.png" alt="Logo CikguBoleh" width={440} height={440} className="hero-logo w-64 max-w-full sm:w-80 lg:w-[430px]" />
+            <img src="/logo-hero.png" alt="Logo CikguBoleh" width={440} height={440} className="hero-logo relative z-[1] w-64 max-w-full sm:w-80 lg:w-[430px]" />
           </div>
         </div>
       </section>
+      <div className="home-green relative">
+        <span className="hg-glow hg-glow-a" aria-hidden />
+        <span className="hg-glow hg-glow-b" aria-hidden />
+        <div className="relative z-[1]">
 
       {/* Search */}
       <section className="mx-auto max-w-7xl px-4 py-8">
@@ -205,6 +210,8 @@ export default function HomePage() {
           <Link href="/alat" className="cb-btn-primary mt-4">Terokai Semua Alat</Link>
         </div>
       </section>
+        </div>
+      </div>
     </>
   );
 }
