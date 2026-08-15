@@ -21,7 +21,14 @@ export const metadata: Metadata = {
   keywords: ["RPH", "guru Malaysia", "PPKI", "worksheet", "PBD", "toolbox guru", "CikguBoleh"],
   applicationName: "CikguBoleh",
   manifest: "/manifest.webmanifest",
-  icons: { icon: "/favicon.svg" },
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon-32.png", type: "image/png", sizes: "32x32" },
+      { url: "/icon-192.png", type: "image/png", sizes: "192x192" },
+    ],
+    apple: "/apple-touch-icon.png",
+  },
   openGraph: {
     title: "CikguBoleh — Semua Alat Cikgu Dalam Satu Tempat",
     description: "Platform AI & Toolbox lengkap untuk guru Malaysia. Isi sekali, semua siap.",
